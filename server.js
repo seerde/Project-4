@@ -46,6 +46,7 @@ app.use(express.static(path.join(__dirname, "./frontend/build")));
 //===================
 app.use("/admin", require("./routes/admin.route"));
 app.use("/api/auth", require("./routes/auth.routes"));
+app.use("/api/game", require("./routes/game.routes"));
 
 // 404 Routes
 //===================
