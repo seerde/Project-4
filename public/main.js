@@ -240,6 +240,6 @@ function clearCanvas() {
 function drawButton() {
   if (player == session) {
     database.push({ start: true, player: player });
-    loop();
+    loop(); 
   }
 }
