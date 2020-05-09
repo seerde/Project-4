@@ -1,5 +1,5 @@
 body {
-    display: grid;
+    display: flex;
     grid-template-columns: 1fr 1fr;
     gap: 10px
 }
@@ -13,6 +13,10 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+.word {
+    font-size: 24px;
 }
 
 .chat li

@@ -3,6 +3,8 @@
   <head>
     <script src="./p5/p5.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.6.3/firebase.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
@@ -10,7 +12,15 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div id="canvasContainer"></div>
+    <div>
+      <div class="word">placeholder</div>
+      <div id="canvasContainer"></div>
+      <div class="buttons">
+        <button id="draw">Draw</button>
+        <!-- <button id="done" disabled>Done</button> -->
+        <button id="clear">Clear</button>
+      </div>
+    </div>
     <div class="container">
       <div id="chat">
         <div class="row">
@@ -42,11 +52,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="buttons">
-      <button id="draw">Draw</button>
-      <!-- <button id="done" disabled>Done</button> -->
-      <button id="clear">Clear</button>
     </div>
     <script src="main.js"></script>
   </body>
