@@ -193,10 +193,6 @@ async function setup() {
       }
     }
 
-    if(data.clear){
-      console.log("test");
-    }
-
     if (!data.clear) {
       points.push(data);
     } else {
@@ -216,12 +212,21 @@ async function setup() {
       playingPlayer = data.next
       if (player == data.next) {
         isDrawing = true;
-        timer = 60;
+        console.log(isDrawing);
+        if(timer == 0){
+          chooseWords();
+        }
+        // timer = 60;
       }
       else {
         isDrawing = false;
-        timer = 60;
+        console.log(isDrawing);
+        // timer = 60;
       }
+    }
+    if(data.check){
+      timer = 60;
+      loop();
     }
   });
 
@@ -297,10 +302,11 @@ function endDrawing() {
 }
 
 async function clearCanvas() {
-  // noLoop();
+  noLoop();
+  timer = 0;
   answered = false;
   if(player == session){
-    timer = 60;
+    // timer = 60;
     gameTimerController(false);
     points = [];
     database.remove();
@@ -364,10 +370,10 @@ async function drawButton() {
     })
 
     $(".word__btn").on("click", (e) => {
-      $(".words__btn").hide();
       word = e.target.innerHTML;
       database.push({ start: true, player: player, word: word});
       worddb.push({ word: word.toLowerCase() });
+      $(".words__btn").remove();
     })
 
     // database.push({ start: true, player: player, word: word});
@@ -376,10 +382,52 @@ async function drawButton() {
   }
 }
 
+async function chooseWords(){
+  var wordsArry;
+  try {
+    let words = await axios.get("/api/word/en/random/1/1/1");
+    wordsArry = words.data.randomWords;
+  } catch (err) {
+    console.log(err);
+  }
+
+  let gameScreen = $("#canvasContainer");
+  gameScreen.css("position", "relative");
+  gameScreen.append("<div class='words__btn'></div>");
+
+  let wordsBtn = $(".words__btn");
+  wordsBtn.css({
+    display: "flex",
+    justifyContent: "space-around",
+    position: "absolute",
+    width: "80%",
+    top: "50%",
+    left: "20px",
+    color: "red"
+  });
+
+  wordsArry.forEach(e => {
+    wordsBtn.append(`<div class='word__btn'>${e}</div>`)
+  })
+
+  $(".word__btn").css({
+    fontSize: "24px",
+    color: "white",
+    backgroundColor: "rgba(25, 26, 35, 0.7)"
+  })
+
+  $(".word__btn").on("click", (e) => {
+    word = e.target.innerHTML;
+    database.push({ check: true, word: word, player: player});
+    worddb.push({ word: word.toLowerCase() });
+    $(".words__btn").remove();
+  })
+}
+
 function gameTimerController(state){
   let timerInterval;
   if(state){
-    timerInterval = setInterval(gameTimer, 1000);
+    timerInterval = setInterval(gameTimer, 100);
   }
   else{
     clearInterval(timerInterval)
