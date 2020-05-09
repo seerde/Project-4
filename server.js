@@ -16,7 +16,7 @@ require("./config/db");
 
 // CORS
 // ===============
-var whitelist = [
+var whitelist = [ 
   "http://localhost:3000",
   "http://localhost:3005",
   "https://<website-name>.herokuapp.com",
