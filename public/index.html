@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="./p5/p5.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.3/firebase.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="canvasContainer"></div>
+    <div class="container">
+      <div id="chat">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <span class="glyphicon glyphicon-comment"></span> Chat
+              </div>
+              <div class="panel-body">
+                <ul class="chat">
+                </ul>
+              </div>
+              <div class="panel-footer">
+                <div class="input-group">
+                  <input
+                    id="inputBox"
+                    type="text"
+                    class="form-control input-sm"
+                    placeholder="Enter your guess"
+                  />
+                  <span class="input-group-btn">
+                    <button class="btn btn-warning btn-sm" id="btnSend">
+                      Send
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="buttons">
+      <button id="draw">Draw</button>
+      <!-- <button id="done" disabled>Done</button> -->
+      <button id="clear">Clear</button>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
