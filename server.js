@@ -16,7 +16,7 @@ require("./config/db");
 
 // CORS
 // ===============
-var whitelist = [
+var whitelist = [ 
   "http://localhost:3000",
   "http://localhost:3005",
   "https://<website-name>.herokuapp.com",
@@ -48,6 +48,12 @@ app.use("/admin", require("./routes/admin.route"));
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/game", require("./routes/game.routes"));
 app.use("/api/word", require("./routes/word.routes"));
+
+app.get("/game", (req, res) => {
+  res.sendFile(
+    path.join(__dirname + "/public/game.html")
+  );
+});
 
 // 404 Routes
 //===================
