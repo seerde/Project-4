@@ -46,7 +46,7 @@ import React, { Component } from 'react'
 export default Login; */}
 
 
- class LoginBox extends Component {
+ class Login extends Component {
 
     constructor(props){
     super(props);
@@ -67,24 +67,26 @@ export default Login; */}
    }
    render() {
             return (
- 
+   
             <div className ="inner-container">
                 <div className= "box">
                     <div className="input-group">
                         <label htmlFor ="emil"></label>
-                        <input type ="text" name="Email" className ="login-input" placeholder ="Email Address "/>
+                        <input type ="text" name="Email" className ="login-input" placeholder ="Email Address " class="input-xlarge"/>
                     </div>
+
 
                     <div className="input-group">
                         <label htmlFor ="password"></label>
                         <input type ="password" name="password" className ="login-input" placeholder ="Password"/>
-                    </div>
-                    <button type ="button" className="login-btn" onClick={this.submitLogin.bind(this)} >Login</button>
+                    </div >
+                    <div class="form-group text-center">
+                    <button type ="button" class="btn btn-success btn-lg" onClick={this.submitLogin.bind(this)} >Login</button>
                 </div>
-                
+                </div>
             </div>
             )
     }
 }
 
-export default LoginBox;
+export default Login;
