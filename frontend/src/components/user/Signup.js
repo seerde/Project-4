@@ -15,8 +15,8 @@ import React, { Component } from 'react'
    }
    render() {
             return (
- 
-            <div className ="inner-container">
+              <div className ="container">
+            <div className ="inner-container-m">
                 <div className= "box">
 
                     <div className="input-group">
@@ -40,9 +40,10 @@ import React, { Component } from 'react'
                     </div>
 
 
-                    <button type ="button" className="login-btn" onClick={this.submitSignup.bind(this)} >Sign Up</button>
+                    <button type ="button" className="btn btn-sm" onClick={this.submitSignup.bind(this)} >Sign Up</button>
                 </div>
                 
+            </div>
             </div>
             )
     }
