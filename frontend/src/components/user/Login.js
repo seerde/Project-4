@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 
 // constructor(props){
 //     super(props);
@@ -20,7 +20,8 @@ import React, { Component } from 'react'
 //                 <input type = "submit" value ="Login"/>
 //            </form>
 //             </div>
-{/* <div className= "root-container">
+{
+  /* <div className= "root-container">
    
     <div className="box-container">
         <div className= "controller">
@@ -43,50 +44,59 @@ import React, { Component } from 'react'
     }
 }
 
-export default Login; */}
+export default Login; */
+}
 
-
- class Login extends Component {
-
-    constructor(props){
+class Login extends Component {
+  constructor(props) {
     super(props);
-    this.state={
-        isLoginOpen: true,
-        isRegisterOpen: false
-     };
-   }
-
-   showLoginBox() {
-    this.setState({isLoginOpen: true, isSignupOpen: false});
+    this.state = {
+      isLoginOpen: true,
+      isRegisterOpen: false,
+    };
   }
 
-   submitLogin (e){
+  showLoginBox() {
+    this.setState({ isLoginOpen: true, isSignupOpen: false });
+  }
 
+  submitLogin(e) {}
+  render() {
+    return (
+      <div className="inner-container">
+        <div className="box">
+          <div className="input-group">
+            <label htmlFor="emil"></label>
+            <input
+              type="text"
+              name="Email"
+              className="login-input input-xlarge"
+              placeholder="Email Address "
+            />
+          </div>
 
-
-   }
-   render() {
-            return (
-   
-            <div className ="inner-container">
-                <div className= "box">
-                    <div className="input-group">
-                        <label htmlFor ="emil"></label>
-                        <input type ="text" name="Email" className ="login-input" placeholder ="Email Address " class="input-xlarge"/>
-                    </div>
-
-
-                    <div className="input-group">
-                        <label htmlFor ="password"></label>
-                        <input type ="password" name="password" className ="login-input" placeholder ="Password"/>
-                    </div >
-                    <div class="form-group text-center">
-                    <button type ="button" class="btn btn-success btn-lg" onClick={this.submitLogin.bind(this)} >Login</button>
-                </div>
-                </div>
-            </div>
-            )
-    }
+          <div className="input-group">
+            <label htmlFor="password"></label>
+            <input
+              type="password"
+              name="password"
+              className="login-input"
+              placeholder="Password"
+            />
+          </div>
+          <div className="form-group text-center">
+            <button
+              type="button"
+              className="btn btn-success btn-lg"
+              onClick={this.submitLogin.bind(this)}
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default Login;

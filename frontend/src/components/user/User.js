@@ -6,22 +6,28 @@ export default class User extends Component {
     super(props);
     this.state = {
       isLoginOpen: true,
-      isRegisterOpen: false,
     };
   }
   showLogin() {
-    this.setState({ isLoginOpen: true, isRegisterOpen: false });
+    console.log("test");
+    this.setState({ isLoginOpen: true });
   }
   showSingup() {
-    this.setState({ isRegisterOpen: true, isLoginOpen: false });
+    console.log("test");
+    this.setState({ isLoginOpen: false });
   }
   render() {
     return (
       <div>
-        <div>tttt</div>
-        <div className="inner-container">
-          <div className="box"></div>
+        <div className="user__container">
+          <div className="user__btn" onClick={() => this.showLogin()}>
+            Login
+          </div>
+          <div className="user__btn" onClick={() => this.showSingup()}>
+            Create Account
+          </div>
         </div>
+        {this.state.isLoginOpen ? <Login /> : <Signup />}
       </div>
       // <div className="film-list">
       //   <div className="film-list-filters">
