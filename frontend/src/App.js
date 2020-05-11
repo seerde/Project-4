@@ -8,6 +8,7 @@ import Navb from "./components/navbar/Navb";
 import { Home } from "./components/home/Home";
 import Login from "./components/user/Login";
 import Signup from "./components/user/Signup";
+import Game from "./components/game/Game";
 
 class App extends Component {
   state = {
@@ -83,6 +84,17 @@ class App extends Component {
               />
             )}
           />
+
+          <Route
+            path="/game"
+            render={(props) => (
+              <Game
+                {...props}
+                userLogin={this.userLogin}
+              />
+            )}
+          />
+
         </Switch>
       </div>
     );
