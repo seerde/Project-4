@@ -1,10 +1,11 @@
-import React, { Component } from 'react'
-import Signup from './components/user/Signup.js';
+import React, { Component } from "react";
+import Signup from "./components/user/Signup.js";
 import Login from "./components/user/Login.js";
+import User from "./components/user/User.js";
+import { Home } from "./components/home/Home.js";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Navb from "./components/navbar/Navb";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 
 class App extends Component {
   state = {
@@ -14,8 +15,6 @@ class App extends Component {
     isLogin: false,
     waiting: false,
   };
-
- 
 
   logoutHandler = (e) => {
     e.preventDefault();
@@ -30,10 +29,12 @@ class App extends Component {
 
   render() {
     return (
-      <div className ="app">
-        <Navb  />
-<Switch>
-        <Route path="/signup" component={Signup} />} />
+      <div className="app">
+        <Navb />
+        <Switch>
+          <Route exact path="/" component={Home} />} />
+          <Route exact path="/user" component={User} />} />
+          <Route path="/signup" component={Signup} />} />
           <Route
             path="/login"
             render={(props) => (
@@ -44,9 +45,9 @@ class App extends Component {
               />
             )}
           />
-          </Switch>
+        </Switch>
       </div>
-    )
+    );
   }
 }
 
