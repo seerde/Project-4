@@ -14,10 +14,23 @@ router.get("/", (req, res) => {
 router.post("/signup", async (req, res) => {
   try {
     let { username, email, password } = req.body;
-    let user = new User({ username, email, password });
+    let user = await new User({ username, email, password });
     await user.save();
-    user.password = await "";
-    res.status(201).json(user);
+    user.password = "";
+
+    const payload = {
+      user
+    };
+
+    jwt.sign(
+      payload,
+      process.env.SECRET,
+      { expiresIn: 36000000 },
+      (error, token) => {
+        if (error) throw error;
+        res.json({ token }).status(201);
+      }
+    );
   } catch (error) {
     if (error.code == 11000)
       res.status(409).json({ message: "Email Exists!!" }); // 409 conflict
