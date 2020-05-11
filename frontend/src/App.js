@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 import { decode } from "jsonwebtoken";
 import { Switch, Route } from "react-router-dom";
-
+import User from "./components/user/User.js";
 import Navb from "./components/navbar/Navb";
 import { Home } from "./components/home/Home";
 import Login from "./components/user/Login";
@@ -73,6 +73,7 @@ class App extends Component {
               />
             )}
           />
+          <Route exact path="/user" component={User} />} />
           <Route
             path="/login"
             render={(props) => (
@@ -84,7 +85,7 @@ class App extends Component {
           />
         </Switch>
       </div>
-    )
+    );
   }
 }
 
