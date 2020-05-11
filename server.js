@@ -16,9 +16,10 @@ require("./config/db");
 
 // CORS
 // ===============
-var whitelist = [ 
+var whitelist = [
   "http://localhost:3000",
   "http://localhost:3005",
+  "http://localhost:3006",
   "https://<website-name>.herokuapp.com",
 ];
 var corsOptions = {
@@ -50,9 +51,7 @@ app.use("/api/game", require("./routes/game.routes"));
 app.use("/api/word", require("./routes/word.routes"));
 
 app.get("/game", (req, res) => {
-  res.sendFile(
-    path.join(__dirname + "/public/game.html")
-  );
+  res.sendFile(path.join(__dirname + "/public/game.html"));
 });
 
 // 404 Routes
@@ -61,9 +60,7 @@ app.get("/game", (req, res) => {
 //   res.json({ error: "Are you lost?", status: 404 }).status(404)
 // );
 app.get("/*", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "./frontend/build", "index.html")
-  );
+  res.sendFile(path.join(__dirname, "./frontend/build", "index.html"));
 });
 
 app.listen(PORT, () => console.log(`unleashed on ${PORT}`));

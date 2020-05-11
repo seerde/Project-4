@@ -12,13 +12,30 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div>
-      <div class="word">placeholder</div>
+    <div class="container text-center">
+      <div class="timer">60</div>
       <div id="canvasContainer"></div>
+      <div class="word"></div>
       <div class="buttons">
         <button id="draw">Draw</button>
         <!-- <button id="done" disabled>Done</button> -->
         <button id="clear">Clear</button>
+      </div>
+      <div class="colors__container">
+        <div class="section">
+          <div id="black" class="color__box"></div>
+          <div id="red" class="color__box"></div>
+          <div id="blue" class="color__box"></div>
+          <div id="green" class="color__box"></div>
+        </div>
+
+        <div class="section">
+          <div id="width1" class="width color__box">5</div>
+          <div id="width2" class="width color__box">15</div>
+          <div id="width3" class="width color__box">25</div>
+        </div>
+
+        <div id="eraser" class="section color__box"></div>
       </div>
     </div>
     <div class="container">
@@ -30,8 +47,7 @@
                 <span class="glyphicon glyphicon-comment"></span> Chat
               </div>
               <div class="panel-body">
-                <ul class="chat">
-                </ul>
+                <ul class="chat"></ul>
               </div>
               <div class="panel-footer">
                 <div class="input-group">

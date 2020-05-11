@@ -1,64 +1,71 @@
-var database, chatdb, worddb, scoredb;
-var points = [];
-var dButtone, doneButtone;
-var isDrawing = true;
-var player;
-var playingPlayer;
-var session = "ibrahim";
-var word = "potato";
-var isDrawing;
-var counter = 0;
-var players = [];
-let timer = 60;
-var checkAnswer = false;
-var score = 0;
-var isCounting = false
-var answered = false
-var isFormating = false;
+let host, sessionID, player; // URL params
+let players = []; // players in session array
+let playersCount;
+let gameDB, playersDB, drawingDB, chatDB, wordDB, timerDB; // realtime databases
+let isDrawing = false; // Drawing vars
+let words = [];
+let word = "";
+let points = []; // canvas points
+let lang = "en";
+let timer;
+let timerMax = 60;
+let timerInterval;
+let isFormating = false;
+let answered = false;
+let penwidth = 6;
+let r = 0,
+  g = 0,
+  b = 0;
 
-class Word{
-  constructor(word){
+class Word {
+  constructor(word) {
     this.word = word;
     this.wordText = document.querySelector(".word");
     this.wordArr = word.split("");
-    this.formatedWord = this.wordArr.map(m => "_");
+    this.formatedWord = this.wordArr.map((m) => "_");
     this.amount = parseInt(this.wordArr.length / 3);
   }
+
   renderWord() {
-    if(playingPlayer == player){
-      this.wordText.innerHTML = this.word
-    }
-    else{
-      if(timer == 60){
+    if (isDrawing) {
+      this.wordText.innerHTML = this.word;
+    } else {
+      if (timer >= 60) {
         this.wordText.innerHTML = this.formatedWord.join(" ");
       }
-  
-      if(timer == 40 && !isFormating){
+
+      // if (timer == 60 && !isFormating) {
+      //   isFormating = true;
+      //   this.pickRand();
+      //   this.wordText.innerHTML = this.formatedWord.join(" ");
+      // }
+
+      if (timer == 40 && !isFormating) {
         isFormating = true;
-        this.pickRand()
+        this.pickRand();
         this.wordText.innerHTML = this.formatedWord.join(" ");
       }
-  
-      if(timer == 20 && !isFormating){
+
+      if (timer == 20 && !isFormating) {
         isFormating = true;
-        this.pickRand()
+        this.pickRand();
         this.wordText.innerHTML = this.formatedWord.join(" ");
       }
-  
-      if(timer == 5 && !isFormating){
+
+      if (timer == 5 && !isFormating) {
         isFormating = true;
-        this.amount -= 1
-        this.pickRand()
+        this.amount -= 1;
+        this.pickRand();
         this.wordText.innerHTML = this.formatedWord.join(" ");
       }
     }
   }
 
-  pickRand(){
-    let count = 0
-    while(count != this.amount){
+  pickRand() {
+    let count = 0;
+    while (count != this.amount) {
       var rand = Math.floor(Math.random() * this.wordArr.length);
-      if(this.formatedWord[rand] != this.wordArr[rand]){
+      if (this.formatedWord[rand] != this.wordArr[rand]) {
         count++;
         this.formatedWord[rand] = this.wordArr[rand];
       }
@@ -67,16 +74,17 @@ class Word{
 }
 var currentWord = new Word(word);
 
-// axios.get("/api/word/en/all").then(res => {console.log(res)}).catch(err => {})
+function setup() {
+  // http://localhost:3006/game?host=seerde&sessionid=1&player=seerde
+  host = getURLParams().host;
+  sessionID = getURLParams().sessionid;
+  player = getURLParams().player;
+  console.log(`Host: ${host}, Session ID: ${sessionID}, Player: ${player}`);
 
-async function setup() {
-  // http://localhost:3005/game?session=<host_name>&id=<player_name>&s=<session_id>
-  session = getURLParams().session;
-  player = getURLParams().id;
-  var s = getURLParams().s;
+  // Add player to session array
+  players.push(player);
 
-  players.push(player)
-  // Your web app's Firebase configuration
+  // Firebase configuration
   var firebaseConfig = {
     apiKey: "AIzaSyDmPon15pDhh6C_-bl6p_xWQrLKx1CVFJU",
     authDomain: "project4-kharbsha.firebaseapp.com",
@@ -85,312 +93,244 @@ async function setup() {
     storageBucket: "project4-kharbsha.appspot.com",
     messagingSenderId: "468753433035",
     appId: "1:468753433035:web:22940fba8bab5fe752364e",
-    measurementId: "G-28ZBD94M21"
+    measurementId: "G-28ZBD94M21",
   };
+
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  // firebase.analytics();
 
-  database = firebase.database().ref(session + s + '/drawings');
-  chatdb = firebase.database().ref(session + s + '/chat');
-  worddb = firebase.database().ref(session + s + '/worddb');
-  scoredb = firebase.database().ref(session + s + '/score');
+  // Creating realtime databases
+  playersDB = firebase.database().ref(host + sessionID + "/playersDB");
+  drawingDB = firebase.database().ref(host + sessionID + "/drawingDB");
+  timerDB = firebase.database().ref(host + sessionID + "/timerDB");
+  gameDB = firebase.database().ref(host + sessionID + "/gameDB");
+  wordDB = firebase.database().ref(host + sessionID + "/wordDB");
+  chatDB = firebase.database().ref(host + sessionID + "/chatDB");
 
-  // if (player == session)
-  //   worddb.push({ word: word });
+  //
+  // PLAYERS
+  /////////////////////////////////
+  playersDB.once("value", (data) => {
+    // get old data from database
+    data = data.val();
 
-  var chat = select(".chat");
-  var chatBtnSend = document.querySelector("#btnSend");
-  var inputBox = select("#inputBox");
+    // tmp object to send to database later
+    let tmp = {};
 
-  isDrawing = (session == player) ? true : false;
-  database.push({ player: player, isDrawing: isDrawing, points: [] });
-  if (session == player) {
-    var obj = {};
-    obj[player] = 0;
-    scoredb.push(obj);
-  }
+    // new player object
+    let playerObj = {
+      isDrawing: false,
+      name: player,
+      score: 0,
+    };
 
-  chatBtnSend.addEventListener("click", (e) => {
-    var msg = inputBox.value().toLowerCase();
-    inputBox.value("");
-
-    worddb.limitToLast(1).once('child_added', function (data) {
-      var data = data.val();
-      console.log(data.word, msg)
-      if (data.word == msg && !isDrawing && !answered) {
-        answered = true;
-        chatdb.push({ name: player, msg: "correct!", answer: true });
-      } else {
-        chatdb.push({ name: player, msg: msg, answer: false });
-      }
-    });
+    // get old data from database modify it and send it
+    if (data) {
+      let count = 1; // players count
+      // if there is old data in database
+      Object.keys(data).forEach((key, index) => {
+        let player = data[key];
+        tmp[`${player.name}`] = player; // copy old data to tmp
+      });
+      tmp[`${playerObj.name}`] = playerObj; // add the new data to old data tmp
+      count = Object.keys(tmp).length; // get players count
+      playersDB.update(tmp); // update players
+      gameDB.update({ start: false, clear: false, loop: false, count: count }); // update players count
+    } else {
+      tmp[`${playerObj.name}`] = playerObj; // add new data tmp
+      playersDB.set(tmp); // push data to database
+      gameDB.set({ start: false, clear: false, loop: false, count: 1 }); // push players count
+    }
+  });
+  playersDB.on("value", (data) => {
+    data = data.val();
+    isDrawing = data[`${player}`].isDrawing ? true : false;
   });
 
-  chatdb.on("child_added", function (data) {
-    var newmsg = data.val();
-    console.log(newmsg);
+  //
+  // CHAT
+  /////////////////////////////////
+  let chatDiv = select(".chat");
+  let chatInp = select("#inputBox");
+  let chatBtn = $("#btnSend");
 
-    if (player == session) {
-      console.log('score')
-      console.log(newmsg)
-      if (newmsg.answer) {
+  chatBtn.on("click", (e) => {
+    let msg = chatInp.value();
+    if (msg != "") {
+      chatInp.value("");
 
-        var drawingPlayer;
-
-        database.limitToLast(1).once("child_added", function (ps) {
-          var ps = ps.val();
-          drawingPlayer = ps.player;
-        });
-
-        scoredb.limitToLast(1).once("child_added", function (ps) {
-          var ps = ps.val();
-          ps[newmsg.name] = ps[newmsg.name] + 10;
-          ps[drawingPlayer] = ps[drawingPlayer] + 5;
-          console.log("test",ps)
-          scoredb.push(ps);
-        });
-      }
+      wordDB.limitToLast(1).once("value", (data) => {
+        data = data.val();
+        if (data.word == msg && !isDrawing && !answered) {
+          answered = true;
+          chatDB.push({
+            playerName: player,
+            msg: `Guessed the answer correctly!`,
+            answer: true,
+          });
+        } else {
+          chatDB.push({ playerName: player, msg: msg, answer: false });
+        }
+      });
     }
+  });
 
-    var li = createElement('li');
+  chatDB.on("child_added", (data) => {
+    data = data.val();
+    let { playerName, msg, answer } = data;
 
-    var nameEle = createElement('strong', newmsg.name);
-    nameEle.class("primary-font");
-    nameEle.parent(li);
+    let li = createElement("li");
 
-    var msgEle = createElement('p', newmsg.msg);
+    let playerNameEle = createElement("strong", playerName);
+    playerNameEle.class("primary-font");
+    playerNameEle.parent(li);
+
+    let msgEle = createElement("p", msg);
 
     msgEle.class("message");
     msgEle.parent(li);
-    li.parent(chat);
+    li.parent(chatDiv);
+
+    if (answer && isDrawing) {
+      playersDB.once("value", (data) => {
+        data = data.val();
+
+        data[`${playerName}`].score += 10;
+        data[`${player}`].score += 5;
+
+        playersDB.update(data);
+      });
+    }
   });
 
-  database.on("child_added", async function (data) {
-    data = data.val()
-    // console.log(data.next)
+  //
+  // DRAWING
+  /////////////////////////////////
+  let canvas = createCanvas(400, 400);
+  canvas.mousePressed(drawKeyDown);
+  canvas.mouseMoved(drawKeyDownAndMoved);
+  canvas.parent("canvasContainer");
+  drawingDB.on("child_added", (data) => {
+    data = data.val();
+    // let {px, py, x, y} = data
+    // let drawingPoints = {px, py, x, y};
+    // r = data.r;
+    // g = data.g;
+    // b = data.b;
+    // penwidth = data.penwidth;
+    points.push(data);
+  });
 
-    if(data.word){
-      word = data.word
-      currentWord = new Word(word);
-    }
+  //
+  // WORD
+  /////////////////////////////////
+  wordDB.set({ word: "" });
+  wordDB.on("value", (data) => {
+    data = data.val();
+    word = data.word;
+    currentWord = new Word(word);
+    currentWord.renderWord();
+    console.log(word);
+  });
 
+  //
+  // TIMER
+  /////////////////////////////////
+  // timerDB.set({ timer: 80 });
+  // timerDB.on("value", (data) => {
+  //   data = data.val();
+  //   timer
+  // });
+
+  //
+  // GAME
+  /////////////////////////////////
+  gameDB.on("value", (data) => {
+    data = data.val();
     if (data.start) {
+      startGame();
+    }
+    if (data.loop) {
+      console.log("started drawing");
       gameTimerController(true);
       loop();
-    }
-
-    if (data.player != player && data.player != undefined) {
-      if (!players.includes(data.player)) {
-        players.push(data.player);
-        if (player == session) {
-          scoredb.limitToLast(1).once("child_added", function (ps) {
-            var ps = ps.val();
-            ps[data.player] = 0;
-            scoredb.push(ps);
-          });
-        }
-      }
-    }
-
-    if (!data.clear) {
-      points.push(data);
     } else {
+      console.log("stopped drawing");
       points = [];
-      if (data.player == player) {
-        isDrawing = true;
-      } else {
-        isDrawing = false;
-      }
-      if (player == session) {
-        var nextPlayer = players[counter++ % players.length]
-        database.push({player: player, next: nextPlayer });
-      }
-    }
-
-    if (data.next) {
-      playingPlayer = data.next
-      if (player == data.next) {
-        isDrawing = true;
-        console.log(isDrawing);
-        if(timer == 0){
-          chooseWords();
-        }
-        // timer = 60;
-      }
-      else {
-        isDrawing = false;
-        console.log(isDrawing);
-        // timer = 60;
-      }
-    }
-    if(data.check){
       timer = 60;
-      loop();
+      document.querySelector(".timer").innerHTML = timer;
+      gameTimerController(false);
+      clear();
+      noLoop();
     }
   });
+  $("#draw").on("click", startRound); // draw button
+  $("#clear").on("click", nextRound); // clear button
+  $("#black").on("click", () => pickColor(0, 0, 0));
+  $("#red").on("click", () => pickColor(255, 0, 0));
+  $("#green").on("click", () => pickColor(0, 255, 0));
+  $("#blue").on("click", () => pickColor(0, 0, 255));
+  $("#eraser").on("click", () => pickColor(255, 255, 255));
+  $("#width1").on("click", () => pickPenwidth(5));
+  $("#width2").on("click", () => pickPenwidth(15));
+  $("#width3").on("click", () => pickPenwidth(30));
 
-  var canvas = createCanvas(400, 400);
-  canvas.mousePressed(drawAndPush);
-  canvas.mouseMoved(drawAndMovedPush);
-  canvas.mouseReleased(endDrawing)
-  canvas.parent("canvasContainer");
-
-  var clearButton = document.querySelector("#clear");
-  clearButton.addEventListener("click", clearCanvas);
-
-  dButtone = document.querySelector("#draw");
-  dButtone.addEventListener("click", drawButton);
-
+  // stop draw() from looping
   noLoop();
 }
 
 function draw() {
-  background(0);
-
-  stroke(255);
-  strokeWeight(1);
-  textAlign(CENTER, CENTER);
-  textSize(20);
-  text(timer, 30, 30);
-
-  currentWord.renderWord()
-
-  if(timer == 0){
-    clearCanvas();
-  }
-
-  stroke(255);
-  strokeWeight(8);
+  stroke(r, g, b);
+  strokeWeight(penwidth);
   noFill();
 
-  for (var i = 0; i < points.length; i++) {
-    var point = points[i];
+  for (let i = 0; i < points.length; i++) {
+    let point = points[i];
+    stroke(point.r, point.g, point.b);
+    strokeWeight(point.penwidth);
     line(point.x, point.y, point.px, point.py);
   }
 }
 
-function drawAndPush() {
+function startRound() {
+  playersDB.once("value", (playersData) => {
+    playersData = playersData.val();
 
-  // if (timer == 0) {
-  //   isDrawing = false;
-  //   clearCanvas();
-  // }
-
-  if (isDrawing) {
-    points.push({ x: mouseX, y: mouseY, px: pmouseX, py: pmouseY });
-    database.push({ player: player, isDrawing: true, x: mouseX, y: mouseY, px: pmouseX, py: pmouseY });
-  }
-}
-
-function drawAndMovedPush() {
-  // if (timer == 0) {
-  //   isDrawing = false;
-  //   clearCanvas();
-  // }
-  if (mouseIsPressed && isDrawing) {
-    drawAndPush();
-  }
-}
-
-function endDrawing() {
-  // if (timer == 0) {
-  //   gameTimerController(false);
-  //   isDrawing = false;
-  //   clearCanvas();
-  // }
-}
-
-async function clearCanvas() {
-  noLoop();
-  timer = 0;
-  answered = false;
-  if(player == session){
-    // timer = 60;
-    gameTimerController(false);
-    points = [];
-    database.remove();
-    chatdb.remove();
-    worddb.remove();
-
-    try {
-      let words = await axios.get("/api/word/en/random/1");
-      word = words.data.randomWords[0];
-    } catch (err) {
-      console.log(err);
-    }
-
-    database.push({ clear: true, player: player, word: word });
-    worddb.push({ word: word.toLowerCase() });
-    answered = false;
-  }
-}
-
-
-async function drawButton() {
-  if (player == session) {
-    try {
-      let words = await axios.get("/api/word/en/random/1");
-      word = words.data.randomWords[0];
-    } catch (err) {
-      console.log(err);
-    }
-
-    var wordsArry;
-    try {
-      let words = await axios.get("/api/word/en/random/1/1/1");
-      wordsArry = words.data.randomWords;
-    } catch (err) {
-      console.log(err);
-    }
-
-    let gameScreen = $("#canvasContainer");
-    gameScreen.css("position", "relative");
-    gameScreen.append("<div class='words__btn'></div>");
-
-    let wordsBtn = $(".words__btn");
-    wordsBtn.css({
-      display: "flex",
-      justifyContent: "space-around",
-      position: "absolute",
-      width: "80%",
-      top: "50%",
-      left: "20px",
-      color: "red"
+    // get players count
+    gameDB.once("value", (gameData) => {
+      gameData = gameData.val();
+      playersCount = gameData.count;
+      // pick random player
+      let rand = Math.floor(Math.random() * playersCount);
+      // get player data
+      let getPlayer = playersData[Object.keys(playersData)[rand]];
+      // mark the player as isDrawing
+      getPlayer.isDrawing = true;
+      if (getPlayer.name == player) {
+        isDrawing = true;
+      }
+      gameData.start = true;
+      // update the database
+      playersDB.update(playersData);
+      gameDB.update(gameData);
     });
+  });
+}
 
-    wordsArry.forEach(e => {
-      wordsBtn.append(`<div class='word__btn'>${e}</div>`)
-    })
-
-    $(".word__btn").css({
-      fontSize: "24px",
-      color: "white",
-      backgroundColor: "rgba(25, 26, 35, 0.7)"
-    })
-
-    $(".word__btn").on("click", (e) => {
-      word = e.target.innerHTML;
-      database.push({ start: true, player: player, word: word});
-      worddb.push({ word: word.toLowerCase() });
-      $(".words__btn").remove();
-    })
-
-    // database.push({ start: true, player: player, word: word});
-    // worddb.push({ word: word.toLowerCase() });
-    // loop();
+async function startGame() {
+  if (isDrawing) {
+    // get 3 random words
+    try {
+      let wordsArry = await axios.get(`/api/word/${lang}/random/1/1/1`);
+      words = wordsArry.data.randomWords;
+    } catch (err) {
+      console.log(err);
+    }
+    renderWordsBtn();
   }
 }
 
-async function chooseWords(){
-  var wordsArry;
-  try {
-    let words = await axios.get("/api/word/en/random/1/1/1");
-    wordsArry = words.data.randomWords;
-  } catch (err) {
-    console.log(err);
-  }
-
+function renderWordsBtn() {
   let gameScreen = $("#canvasContainer");
   gameScreen.css("position", "relative");
   gameScreen.append("<div class='words__btn'></div>");
@@ -403,86 +343,135 @@ async function chooseWords(){
     width: "80%",
     top: "50%",
     left: "20px",
-    color: "red"
+    color: "red",
   });
 
-  wordsArry.forEach(e => {
-    wordsBtn.append(`<div class='word__btn'>${e}</div>`)
-  })
+  words.forEach((e) => {
+    wordsBtn.append(`<div class='word__btn'>${e}</div>`);
+  });
 
   $(".word__btn").css({
     fontSize: "24px",
     color: "white",
-    backgroundColor: "rgba(25, 26, 35, 0.7)"
-  })
+    backgroundColor: "rgba(25, 26, 35, 0.7)",
+  });
 
   $(".word__btn").on("click", (e) => {
     word = e.target.innerHTML;
-    database.push({ check: true, word: word, player: player});
-    worddb.push({ word: word.toLowerCase() });
     $(".words__btn").remove();
-  })
+    // database.push({ start: true, player: player, word: word });
+    gameDB.once("value", (data) => {
+      data = data.val();
+      data.loop = true;
+      data.start = false;
+      gameDB.update(data);
+    });
+    wordDB.update({ word: word.toUpperCase() });
+  });
 }
 
-function gameTimerController(state){
-  let timerInterval;
-  if(state){
-    timerInterval = setInterval(gameTimer, 100);
-  }
-  else{
-    clearInterval(timerInterval)
-  }
-}
+function nextRound() {
+  drawingDB.remove();
+  chatDB.remove();
+  gameDB.once("value", (gameData) => {
+    gameData = gameData.val();
+    gameData.loop = false;
+    gameDB.update(gameData);
 
-function gameTimer(){
-  if (timer > 0) {
-    timer--;
-    isFormating = false;
-  }
-}
-
-function renderWord(){
-  let wordText = document.querySelector(".word");
-  let wordArr = word.split("");
-  let formatedWord = wordArr.map(m => "_");
-  let amount = parseInt(wordArr.length / 3)
-
-  if(playingPlayer == player){
-    wordText.innerHTML = word
-  }
-  else{
-    if(timer == 60){
-      wordText.innerHTML = formatedWord.join(" ");
-    }
-
-    if(timer == 40 && !isFormating){
-      isFormating = true;
-      pickRand()
-      wordText.innerHTML = formatedWord.join(" ");
-    }
-
-    if(timer == 20 && !isFormating){
-      isFormating = true;
-      pickRand()
-      wordText.innerHTML = formatedWord.join(" ");
-    }
-
-    if(timer == 5 && !isFormating){
-      isFormating = true;
-      amount -= 1
-      pickRand()
-      wordText.innerHTML = formatedWord.join(" ");
-    }
-  }
-
-  function pickRand(){
-    let count = 0
-    while(count != amount){
-      var rand = Math.floor(Math.random() * wordArr.length);
-      if(formatedWord[rand] != wordArr[rand]){
-        count++;
-        formatedWord[rand] = wordArr[rand];
+    playersDB.once("value", (playersData) => {
+      playersData = playersData.val();
+      let tmpIndex = 0;
+      Object.keys(playersData).forEach((key, index) => {
+        if (playersData[key].isDrawing) {
+          playersData[key].isDrawing = false;
+          tmpIndex = index == gameData.count - 1 ? 0 : index + 1;
+        }
+      });
+      let getPlayer = playersData[Object.keys(playersData)[tmpIndex]];
+      getPlayer.isDrawing = true;
+      if (getPlayer.name == player) {
+        isDrawing = true;
       }
-    }
+      gameData.start = true;
+      playersDB.update(playersData);
+      gameDB.update(gameData);
+    });
+  });
+}
+
+function drawKeyDown() {
+  if (isDrawing) {
+    points.push({
+      x: mouseX,
+      y: mouseY,
+      px: pmouseX,
+      py: pmouseY,
+      r,
+      g,
+      b,
+      penwidth,
+    });
+    drawingDB.push({
+      x: mouseX,
+      y: mouseY,
+      px: pmouseX,
+      py: pmouseY,
+      r,
+      g,
+      b,
+      penwidth,
+    });
   }
+}
+
+function drawKeyDownAndMoved() {
+  if (mouseIsPressed && isDrawing) {
+    drawKeyDown();
+  }
+}
+
+function gameTimerController(state) {
+  if (state) {
+    console.log("started time", timerInterval);
+    let start = new Date();
+    timerInterval = setInterval(() => {
+      let currentTime = new Date();
+      let count = +currentTime - +start;
+      let seconds = Math.floor(count / 1000) % 60;
+      timer = timerMax - seconds;
+      isFormating = false;
+      document.querySelector(".timer").innerHTML = timer;
+      currentWord.renderWord();
+      if (timer == 1) {
+        clearInterval();
+        if (isDrawing) {
+          nextRound();
+        }
+      }
+
+      // if (timer > 0) {
+      //   timer--;
+      //   isFormating = false;
+      //   document.querySelector(".timer").innerHTML = timer;
+      //   currentWord.renderWord();
+      // } else {
+      //   if (isDrawing) {
+      //   }
+      // }
+    }, 1000);
+  } else {
+    console.log("stoped time", timerInterval);
+    clearInterval(timerInterval);
+  }
+}
+
+function pickColor(newR, newG, newB) {
+  console.log("test");
+  r = newR;
+  g = newG;
+  b = newB;
+}
+function pickPenwidth(newPenwidth) {
+  console.log("tttt");
+  penwidth = newPenwidth;
 }
