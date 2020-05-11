@@ -13,12 +13,13 @@
   "author": "kharbsha group",
   "license": "ISC",
   "dependencies": {
-    "admin-bro": "^2.3.0",
+    "admin-bro": "^2.3.1",
     "admin-bro-expressjs": "^2.0.5",
     "admin-bro-mongoose": "^0.5.2",
     "axios": "^0.19.2",
     "bcrypt": "^4.0.1",
     "bcryptjs": "^2.4.3",
+    "bootstrap": "^4.4.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -28,6 +29,7 @@
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^2.2.0",
     "mongoose": "^5.9.11",
-    "mongoose-autopopulate": "^0.12.2"
+    "mongoose-autopopulate": "^0.12.2",
+    "react-bootstrap": "^1.0.1"
   }
 }

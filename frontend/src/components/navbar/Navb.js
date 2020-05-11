@@ -15,6 +15,9 @@ export const Navb = () => {
     </Nav>
   </Navbar.Collapse>
 </Navbar>
-        </div>
+
+
+      </div>
     )
 }
+export default Navb;
