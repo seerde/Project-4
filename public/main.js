@@ -161,7 +161,7 @@ function setup() {
 
       wordDB.limitToLast(1).once("value", (data) => {
         data = data.val();
-        if (data.word == msg && !isDrawing && !answered) {
+        if (data.word == msg.toUpperCase() && !isDrawing && !answered) {
           answered = true;
           chatDB.push({
             playerName: player,

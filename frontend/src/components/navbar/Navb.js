@@ -1,23 +1,42 @@
 import React from 'react'
 import { Navbar, Nav } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
-export const Navb = () => {
-    return (
-        <div>
-            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-  <Navbar.Brand href="#home">Kharbashah</Navbar.Brand>
-  <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-  <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
-    <Nav>
-      <Nav.Link eventKey={2} href="#" >
-       Logout 
+const Navb = (props) => {
+
+  const authNavDetails = props.user ? (
+    <>
+      <Nav.Link as={Link} to="/profile" user={props.user}>
+        Profile
       </Nav.Link>
-    </Nav>
-  </Navbar.Collapse>
-</Navbar>
+      <Nav.Link as={Link} to="/logout" onClick={props.logout}>
+        Logout
+      </Nav.Link>
+    </>
+  ) : (
+      <>
+        <Nav.Link as={Link} to="/login">
+          Login
+      </Nav.Link>
+        <Nav.Link as={Link} to="/signup">
+          Register
+      </Nav.Link>
+      </>
+    );
 
-
-      </div>
-    )
+  return (
+    <div>
+      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+        <Navbar.Brand as={Link} to="/">Kharbashah</Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
+          <Nav>
+            {authNavDetails}
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+    </div>
+  )
 }
+
 export default Navb;
