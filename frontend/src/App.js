@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 import { decode } from "jsonwebtoken";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import User from "./components/user/User.js";
+import privatepage from "./components/home/privatepage.js";
 import Navb from "./components/navbar/Navb";
 import { Home } from "./components/home/Home";
 import Login from "./components/user/Login";
@@ -65,6 +66,7 @@ class App extends Component {
         <Navb user={user} logout={this.logoutHandler} />
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route path="/room" component={privatepage} />} />
           <Route
             path="/signup"
             render={(props) => (
