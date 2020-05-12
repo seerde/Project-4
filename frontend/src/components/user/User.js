@@ -9,11 +9,9 @@ export default class User extends Component {
     };
   }
   showLogin() {
-    console.log("test");
     this.setState({ isLoginOpen: true });
   }
   showSingup() {
-    console.log("test");
     this.setState({ isLoginOpen: false });
   }
   render() {
@@ -27,21 +25,12 @@ export default class User extends Component {
             Create Account
           </div>
         </div>
-        {this.state.isLoginOpen ? <Login /> : <Signup />}
+        {this.state.isLoginOpen ? (
+          <Login {...this.props} userLogin={this.props.userLogin} />
+        ) : (
+          <Signup {...this.props} userLogin={this.props.userLogin} />
+        )}
       </div>
-      // <div className="film-list">
-      //   <div className="film-list-filters">
-      //     <div className="film-list-filter" onClick={this.showLogin.bind(this)}>
-      //       Login
-      //     </div>
-      //     <div
-      //       className="film-list-filter"
-      //       onClick={this.showSingup.bind(this)}
-      //     >
-      //       Sign up
-      //     </div>
-      //   </div>
-      // </div>
     );
   }
 }

@@ -15,7 +15,7 @@ const Signup = (props) => {
     if (register["password"] == register["password_confirmation"]) {
       try {
         let data = await axios.post(
-          "http://localhost:3001/api/auth/signup",
+          "http://localhost:3005/api/auth/signup",
           register
         );
         if (data.data.token) {
@@ -33,56 +33,54 @@ const Signup = (props) => {
   };
 
   return (
-    <div className="container">
-      <div className="inner-container-m">
-        <div className="box">
-          <div className="input-group">
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              onChange={changeHandler}
-            />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="emil"></label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address "
-              onChange={changeHandler}
-            />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="password"></label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              onChange={changeHandler}
-            />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="password"></label>
-            <input
-              type="password"
-              name="password_confirmation"
-              placeholder="Password confirmation "
-              onChange={changeHandler}
-            />
-          </div>
-
-          <button
-            type="button"
-            className="btn btn-sm"
-            onClick={(e) => registerHandler(e)}
-          >
-            Sign Up
-          </button>
+    <div className="inner-container">
+      <div className="box">
+        <div className="input-group">
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            onChange={changeHandler}
+          />
         </div>
+
+        <div className="input-group">
+          <label htmlFor="emil"></label>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address "
+            onChange={changeHandler}
+          />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="password"></label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            onChange={changeHandler}
+          />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="password"></label>
+          <input
+            type="password"
+            name="password_confirmation"
+            placeholder="Password confirmation "
+            onChange={changeHandler}
+          />
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-sm"
+          onClick={(e) => registerHandler(e)}
+        >
+          Sign Up
+        </button>
       </div>
     </div>
   );

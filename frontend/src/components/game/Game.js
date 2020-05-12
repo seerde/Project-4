@@ -49,10 +49,12 @@ export default class Game extends Component {
 
       renderWord() {
         if (isDrawing) {
-          this.wordText.innerHTML = this.word;
+          this.wordText.innerHTML = `<span>${this.word}</span>`;
         } else {
           if (timer >= 60) {
-            this.wordText.innerHTML = this.formatedWord.join(" ");
+            this.wordText.innerHTML = `<span>${this.formatedWord.join(
+              " "
+            )}</span>`;
           }
 
           // if (timer == 60 && !isFormating) {
@@ -64,20 +66,26 @@ export default class Game extends Component {
           if (timer == 40 && !isFormating) {
             isFormating = true;
             this.pickRand();
-            this.wordText.innerHTML = this.formatedWord.join(" ");
+            this.wordText.innerHTML = `<span>${this.formatedWord.join(
+              " "
+            )}</span>`;
           }
 
           if (timer == 20 && !isFormating) {
             isFormating = true;
             this.pickRand();
-            this.wordText.innerHTML = this.formatedWord.join(" ");
+            this.wordText.innerHTML = `<span>${this.formatedWord.join(
+              " "
+            )}</span>`;
           }
 
           if (timer == 5 && !isFormating) {
             isFormating = true;
             this.amount -= 1;
             this.pickRand();
-            this.wordText.innerHTML = this.formatedWord.join(" ");
+            this.wordText.innerHTML = `<span>${this.formatedWord.join(
+              " "
+            )}</span>`;
           }
         }
       }
@@ -98,9 +106,14 @@ export default class Game extends Component {
     p.setup = () => {
       // http://localhost:3006/game?host=seerde&sessionid=1&player=seerde
 
-      host = values.host;
-      sessionID = values.sessionid;
-      player = values.player;
+      // host = values.host;
+      // sessionID = values.sessionid;
+      // player = values.player;
+      // console.log(`Host: ${host}, Session ID: ${sessionID}, Player: ${player}`);
+
+      host = this.props.match.params.host;
+      sessionID = this.props.match.params.sessionid;
+      player = this.props.match.params.player;
       console.log(`Host: ${host}, Session ID: ${sessionID}, Player: ${player}`);
 
       // Add player to session array
@@ -156,7 +169,11 @@ export default class Game extends Component {
       });
       playersDB.on("value", (data) => {
         data = data.val();
-        isDrawing = data[`${player}`].isDrawing ? true : false;
+        if (data) {
+          if (data.hasOwnProperty(`${player}`)) {
+            isDrawing = data[`${player}`].isDrawing ? true : false;
+          }
+        }
       });
 
       //
@@ -218,7 +235,10 @@ export default class Game extends Component {
       //
       // DRAWING
       /////////////////////////////////
-      let canvas = p.createCanvas(400, 400);
+      let canvasDiv = document.getElementById("canvasContainer");
+      let width = canvasDiv.offsetWidth;
+      let height = canvasDiv.offsetHeight;
+      let canvas = p.createCanvas(width, height);
       canvas.mousePressed(drawKeyDown);
       canvas.mouseMoved(drawKeyDownAndMoved);
       canvas.parent("canvasContainer");
@@ -270,7 +290,7 @@ export default class Game extends Component {
           console.log("stopped drawing");
           points = [];
           timer = 60;
-          document.querySelector(".timer").innerHTML = timer;
+          document.querySelector(".timer").innerHTML = `<span>${timer}</span>`;
           gameTimerController(false);
           p.clear();
           p.noLoop();
@@ -279,13 +299,32 @@ export default class Game extends Component {
       $("#draw").on("click", startRound); // draw button
       $("#clear").on("click", nextRound); // clear button
       $("#black").on("click", () => pickColor(0, 0, 0));
+      $("#aliceblue").on("click", () => pickColor(240, 248, 255));
+      $("#gray").on("click", () => pickColor(128, 128, 128));
+      $("#lightgray").on("click", () => pickColor(211, 211, 211));
+      $("#darkred").on("click", () => pickColor(139, 0, 0));
+      $("#brown").on("click", () => pickColor(139, 69, 19));
       $("#red").on("click", () => pickColor(255, 0, 0));
-      $("#green").on("click", () => pickColor(0, 255, 0));
+      $("#pink").on("click", () => pickColor(255, 192, 203));
+      $("#orange").on("click", () => pickColor(255, 165, 0));
+      $("#darkorange").on("click", () => pickColor(255, 140, 0));
+      $("#yellow").on("click", () => pickColor(255, 255, 0));
+      $("#khaki").on("click", () => pickColor(240, 230, 140));
+      $("#green").on("click", () => pickColor(0, 128, 0));
+      $("#lightgreen").on("click", () => pickColor(144, 238, 144));
+      $("#lightblue").on("click", () => pickColor(30, 144, 255));
+      $("#lightskyblue").on("click", () => pickColor(135, 206, 250));
       $("#blue").on("click", () => pickColor(0, 0, 255));
+      $("#slateblue").on("click", () => pickColor(106, 90, 205));
+      $("#purple").on("click", () => pickColor(128, 0, 128));
+      $("#violet").on("click", () => pickColor(238, 130, 238));
+
       $("#eraser").on("click", () => pickColor(255, 255, 255));
+
       $("#width1").on("click", () => pickPenwidth(5));
       $("#width2").on("click", () => pickPenwidth(15));
-      $("#width3").on("click", () => pickPenwidth(30));
+      $("#width3").on("click", () => pickPenwidth(25));
+      $("#width4").on("click", () => pickPenwidth(40));
 
       // stop draw() from looping
       p.noLoop();
@@ -301,6 +340,12 @@ export default class Game extends Component {
         p.strokeWeight(point.penwidth);
         p.line(point.x, point.y, point.px, point.py);
       }
+    };
+    p.windowResized = () => {
+      let canvasDiv = document.getElementById("canvasContainer");
+      let width = canvasDiv.offsetWidth;
+      let height = canvasDiv.offsetHeight;
+      p.resizeCanvas(width, height);
     };
 
     function startRound() {
@@ -333,7 +378,7 @@ export default class Game extends Component {
         // get 3 random words
         try {
           let wordsArry = await axios.get(
-            `http://localhost:3001/api/word/${lang}/random/1/1/1`
+            `http://localhost:3005/api/word/${lang}/random/1/1/1`
           );
           words = wordsArry.data.randomWords;
         } catch (err) {
@@ -453,7 +498,7 @@ export default class Game extends Component {
           let seconds = Math.floor(count / 1000) % 60;
           timer = timerMax - seconds;
           isFormating = false;
-          document.querySelector(".timer").innerHTML = timer;
+          document.querySelector(".timer").innerHTML = `<span>${timer}</span>`;
           currentWord.renderWord();
           if (timer == 1) {
             clearInterval();
@@ -496,62 +541,140 @@ export default class Game extends Component {
 
   render() {
     return (
-      <div>
-        <div className="container text-center">
-          <div className="timer">60</div>
-          <div id="canvasContainer"></div>
-          <div className="word"></div>
-          <div className="buttons">
-            <button id="draw">Draw</button>
-            <button id="clear">Clear</button>
-          </div>
-          <div className="colors__container">
-            <div className="section">
-              <div id="black" className="color__box"></div>
-              <div id="red" className="color__box"></div>
-              <div id="blue" className="color__box"></div>
-              <div id="green" className="color__box"></div>
-            </div>
-
-            <div className="section">
-              <div id="width1" className="width color__box">
-                5
-              </div>
-              <div id="width2" className="width color__box">
-                15
-              </div>
-              <div id="width3" className="width color__box">
-                25
-              </div>
-            </div>
-
-            <div id="eraser" className="section color__box"></div>
-          </div>
-        </div>
-        <div className="container">
-          <div id="chat">
-            <div className="row">
-              <div className="col-md-6 col-md-offset-3">
-                <div className="panel panel-primary">
-                  <div className="panel-heading">
-                    <span className="glyphicon glyphicon-comment"></span> Chat
+      <div className="all__view">
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-9">
+              <div className="game__container">
+                <div className="row inner__game__container">
+                  <div className="col-2 leaderboard__container">
+                    <div></div>
                   </div>
-                  <div className="panel-body">
-                    <ul className="chat"></ul>
+                  <div className="col-9 drawing__container">
+                    <div className="timer">
+                      <span>60</span>
+                    </div>
+                    <div id="canvasContainer" className="canvasContainer"></div>
+                    <div className="word">
+                      <span>WORD</span>
+                    </div>
                   </div>
-                  <div className="panel-footer">
-                    <div className="input-group">
-                      <input
-                        id="inputBox"
-                        type="text"
-                        className="form-control input-sm"
-                        placeholder="Enter your guess"
-                      />
-                      <span className="input-group-btn">
-                        <button className="btn btn-warning btn-sm" id="btnSend">
-                          Send
-                        </button>
-                      </span>
+                  <div className="col-1 tools__container">
+                    <div className="row tools1">
+                      <div className="pen__box__row">
+                        <div
+                          id="eraser"
+                          className="pen__box"
+                          style={{ marginTop: "10px" }}
+                        ></div>
+                      </div>
+                      <div className="pen__box__row">
+                        <div
+                          id="width1"
+                          className="pen__box"
+                          style={{ backgroundColor: "gray" }}
+                        >
+                          5
+                        </div>
+                        <div
+                          id="width2"
+                          className="pen__box"
+                          style={{ backgroundColor: "gray" }}
+                        >
+                          15
+                        </div>
+                        <div
+                          id="width3"
+                          className="pen__box"
+                          style={{ backgroundColor: "gray" }}
+                        >
+                          25
+                        </div>
+                        <div
+                          id="width4"
+                          className="pen__box"
+                          style={{ backgroundColor: "gray" }}
+                        >
+                          40
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row tools2">
+                      <div className="color__box__row">
+                        <div id="aliceblue" className="color__box"></div>
+                        <div id="black" className="color__box"></div>
+                      </div>
+                      <div className="color__box__row">
+                        <div id="lightgray" className="color__box"></div>
+                        <div id="gray" className="color__box"></div>
+                      </div>
+                      <div className="color__box__row">
+                        <div id="brown" className="color__box"></div>
+                        <div id="darkred" className="color__box"></div>
+                      </div>
+                      <div className="color__box__row">
+                        <div id="pink" className="color__box"></div>
+                        <div id="red" className="color__box"></div>
+                      </div>
+                      <div className="color__box__row">
+                        <div id="darkorange" className="color__box"></div>
+                        <div id="orange" className="color__box"></div>
+                      </div>
+                      <div className="color__box__row">
+                        <div id="khaki" className="color__box"></div>
+                        <div id="yellow" className="color__box"></div>
+                      </div>
+                      <div className="color__box__row">
+                        <div id="lightgreen" className="color__box"></div>
+                        <div id="green" className="color__box"></div>
+                      </div>
+                      <div className="color__box__row">
+                        <div id="lightskyblue" className="color__box"></div>
+                        <div id="lightblue" className="color__box"></div>
+                      </div>
+                      <div className="color__box__row">
+                        <div id="slateblue" className="color__box"></div>
+                        <div id="blue" className="color__box"></div>
+                      </div>
+                      <div className="color__box__row">
+                        <div id="violet" className="color__box"></div>
+                        <div id="purple" className="color__box"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="chat__container">
+                <div id="chat">
+                  <div className="col">
+                    <div className="panel panel-primary">
+                      <div className="panel-heading">
+                        <span className="glyphicon glyphicon-comment"></span>{" "}
+                        Chat
+                      </div>
+                      <div className="panel-body">
+                        <ul className="chat"></ul>
+                      </div>
+                      <div className="panel-footer">
+                        <div className="input-group">
+                          <input
+                            id="inputBox"
+                            type="text"
+                            className="form-control input-sm"
+                            placeholder="Enter your guess"
+                          />
+                          <span className="input-group-btn">
+                            <button
+                              className="btn btn-warning btn-sm"
+                              id="btnSend"
+                            >
+                              Send
+                            </button>
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -559,6 +682,7 @@ export default class Game extends Component {
             </div>
           </div>
         </div>
+        <button id="draw">start</button>
       </div>
     );
   }

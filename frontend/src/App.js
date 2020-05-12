@@ -10,6 +10,7 @@ import { Home } from "./components/home/Home";
 import Login from "./components/user/Login";
 import Signup from "./components/user/Signup";
 import Game from "./components/game/Game";
+import GameRedirect from "./components/user/GameRedirect.js";
 
 class App extends Component {
   state = {
@@ -29,7 +30,7 @@ class App extends Component {
 
   userLogin = async (token) => {
     try {
-      let data = await axios.get("http://localhost:3001/api/auth/user", {
+      let data = await axios.get("http://localhost:3005/api/auth/user", {
         headers: { "x-auth-token": token },
       });
 
@@ -67,16 +68,18 @@ class App extends Component {
           <Route exact path="/" component={Home} />
           <Route path="/room" component={privatepage} />} />
           <Route
-            path="/signup"
-            render={(props) => <Signup {...props} userLogin={this.userLogin} />}
-          />
-          <Route exact path="/user" component={User} />} />
-          <Route
-            path="/login"
-            render={(props) => <Login {...props} userLogin={this.userLogin} />}
+            path="/user"
+            render={(props) => <User {...props} userLogin={this.userLogin} />}
           />
           <Route
-            path="/game"
+            exact
+            path="/game/:host/:sessionid"
+            render={(props) => <GameRedirect user={user} {...props} />}
+          />
+          >
+          <Route
+            exact
+            path="/game/:host/:sessionid/:player"
             render={(props) => <Game {...props} userLogin={this.userLogin} />}
           />
         </Switch>

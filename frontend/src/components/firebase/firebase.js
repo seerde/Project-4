@@ -36,3 +36,7 @@ export const getWordRef = (host, sessionID) => {
 export const getGameRef = (host, sessionID) => {
   return firebase.database().ref(host + sessionID + "/gameDB");
 };
+
+export const getSessionRef = (host, sessionID) => {
+  return firebase.database().ref(host + sessionID + "/sessionDB");
+};
