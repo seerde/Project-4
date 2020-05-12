@@ -18,14 +18,53 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
 }
-
-.home h2,
-p {
+.player h1 { margin: 5px auto;}
+.home .name{    margin: 10px auto; width: 50%;border-radius:7px;border: none;}
+.home .des{    margin: 10px auto; width: 50%;border-radius:7px;border: none;height: 100px;}
+.home .lang,option{width: 45%;margin: 5px auto;border-radius: 20px;}
+.home h1,h2,p {
   padding-left: 30px;
   padding-bottom: 10px;
   color: #fff;
   margin-top: 55px;
 }
+
+#whith-board{
+background-color: #fff;
+  /* border: 2px solid red; */
+  background-repeat: no-repeat;
+  background-size: 50px 50px;
+  padding: 5px;
+  border-radius: 20px;
+
+}
+
+.btn-primary-start{
+  background-color: #439330 !important;
+  border-color: #439330 !important;
+  width: 30%!important;
+  margin: 5px auto;
+}
+.player{
+  max-width: 800px;
+  margin: 100px auto;
+  padding: 30px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 460px;
+  background-color: rgb(245, 243, 243);
+  
+}
+/* 
+.home h2,p {
+  padding-left: 30px;
+  padding-bottom: 10px;
+  color: #fff;
+  margin-top: 55px;
+
+} */
 
 .btn-primary {
   background-color: #439330 !important;
