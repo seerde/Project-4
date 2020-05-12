@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Signup from './components/user/Signup.js';
 import Login from "./components/user/Login.js";
+import privatepage from "./components/home/privatepage.js";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Navb from "./components/navbar/Navb";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -33,6 +34,7 @@ class App extends Component {
       <div className ="app">
         <Navb  />
 <Switch>
+<Route path="/room" component={privatepage} />} />
         <Route path="/signup" component={Signup} />} />
           <Route
             path="/login"
