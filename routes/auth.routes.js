@@ -4,7 +4,7 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-let User = require("../model/user");
+let User = require("../model/User");
 let isLoggedIn = require("../config/config");
 
 router.get("/", (req, res) => {
@@ -19,7 +19,7 @@ router.post("/signup", async (req, res) => {
     user.password = "";
 
     const payload = {
-      user
+      user,
     };
 
     jwt.sign(
@@ -33,7 +33,8 @@ router.post("/signup", async (req, res) => {
     );
   } catch (error) {
     if (error.code == 11000)
-      res.status(409).json({ message: "Email Exists!!" }); // 409 conflict
+      res.status(409).json({ message: "Email Exists!!" });
+    // 409 conflict
     else res.status(500).json(error);
   }
 });
@@ -134,7 +135,6 @@ router.post("/ChangePassword", isLoggedIn, async (req, res) => {
 });
 
 router.get("/user", isLoggedIn, async (req, res) => {
-
   try {
     let user = await User.findById(req.user._id, "-password");
 
@@ -144,7 +144,7 @@ router.get("/user", isLoggedIn, async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "something went wrong!" });
   }
-
+  
 });
 
 module.exports = router;
