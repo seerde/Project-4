@@ -9,7 +9,7 @@ export const privatepage = () => {
           <Col>
             <Container className="home">
               <Row>
-                <h1> Create private Rome </h1>
+                <h1 className="home-h1"> Create private Room </h1>
               </Row>
               <Row>
                 <input className="name form-control"></input>
@@ -32,7 +32,7 @@ export const privatepage = () => {
           <Col>
             <Container className="player">
               <Row>
-                <h1> PLAYERS</h1>
+                <h1> PLAYERS </h1>
               </Row>
               <Row>
                 <hr></hr>

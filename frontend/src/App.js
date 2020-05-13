@@ -11,7 +11,7 @@ import Login from "./components/user/Login";
 import Signup from "./components/user/Signup";
 import Game from "./components/game/Game";
 import GameRedirect from "./components/user/GameRedirect.js";
-
+import Form from "./components/home/Form";
 class App extends Component {
   state = {
     isAuth: false,
