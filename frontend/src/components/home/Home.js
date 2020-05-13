@@ -8,7 +8,7 @@ export const Home = () => {
         <div>
         <Container>
           <Row>
-            <Col>
+            <Col xs={8}>
               <Container className="home">
               <div className="home-box">
                 <Row>
@@ -49,7 +49,7 @@ export const Home = () => {
                  </>
               </Container>
             </Col>
-            <Col>
+            <Col xs={4}>
               <Container>
               <Form />
               </Container>
