@@ -20,7 +20,7 @@ var whitelist = [
   "http://localhost:3000",
   "http://localhost:3005",
   "http://localhost:3006",
-  "https://<website-name>.herokuapp.com",
+  "https://kharbsha.herokuapp.com/",
 ];
 var corsOptions = {
   origin: function (origin, callback) {
