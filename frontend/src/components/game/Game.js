@@ -291,6 +291,7 @@ export default class Game extends Component {
           console.log("stopped drawing");
           points = [];
           timer = 60;
+          answered = false;
           document.querySelector(".timer").innerHTML = `<span>${timer}</span>`;
           gameTimerController(false);
           p.clear();
