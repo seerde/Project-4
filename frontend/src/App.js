@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { Component } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { decode } from "jsonwebtoken";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import User from "./components/user/User.js";
+import privatepage from "./components/home/privatepage.js";
 import Navb from "./components/navbar/Navb";
 import { Home } from "./components/home/Home";
 import Login from "./components/user/Login";
 import Signup from "./components/user/Signup";
 import Game from "./components/game/Game";
-
+import GameRedirect from "./components/user/GameRedirect.js";
+import Form from "./components/home/Form";
 class App extends Component {
   state = {
     isAuth: false,
-    user: null
+    user: null,
   };
 
   logoutHandler = (e) => {
@@ -26,21 +28,20 @@ class App extends Component {
     });
   };
 
-
   userLogin = async (token) => {
     try {
-      let data = await axios.get("http://localhost:3001/api/auth/user", {
-        headers: { "x-auth-token": token }
+      let data = await axios.get("http://localhost:3005/api/auth/user", {
+        headers: { "x-auth-token": token },
       });
 
       this.setState({
         isAuth: true,
-        user: data.data.user
+        user: data.data.user,
       });
     } catch (err) {
       this.setState({
         user: null,
-        isAuth: false
+        isAuth: false,
       });
     }
   };
@@ -65,36 +66,32 @@ class App extends Component {
         <Navb user={user} logout={this.logoutHandler} />
         <Switch>
           <Route exact path="/" component={Home} />
+          {/* <Route
+     path="/:id"
+     render={(props)=>{
+             switch(props.match.params.id){
+                  case "1": return <Home/>;
+                  case "2" : return <Form/>;
+                  default : return null;
+              }
+     }}
+  /> */}
+          <Route path="/room" component={privatepage} />} />
           <Route
-            path="/signup"
-            render={(props) => (
-              <Signup
-                {...props}
-                userLogin={this.userLogin}
-              />
-            )}
+            path="/user"
+            render={(props) => <User {...props} userLogin={this.userLogin} />}
           />
-          <Route exact path="/user" component={User} />} />
           <Route
-            path="/login"
-            render={(props) => (
-              <Login
-                {...props}
-                userLogin={this.userLogin}
-              />
-            )}
+            exact
+            path="/game/:host/:sessionid"
+            render={(props) => <GameRedirect user={user} {...props} />}
           />
-
+          >
           <Route
-            path="/game"
-            render={(props) => (
-              <Game
-                {...props}
-                userLogin={this.userLogin}
-              />
-            )}
+            exact
+            path="/game/:host/:sessionid/:player"
+            render={(props) => <Game {...props} userLogin={this.userLogin} />}
           />
-
         </Switch>
       </div>
     );
