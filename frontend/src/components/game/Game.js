@@ -114,6 +114,7 @@ export default class Game extends Component {
       host = this.props.match.params.host;
       sessionID = this.props.match.params.sessionid;
       player = this.props.match.params.player;
+      lang = this.props.match.params.lang;
       console.log(`Host: ${host}, Session ID: ${sessionID}, Player: ${player}`);
 
       // Add player to session array
@@ -377,9 +378,7 @@ export default class Game extends Component {
       if (isDrawing) {
         // get 3 random words
         try {
-          let wordsArry = await axios.get(
-            `http://localhost:3005/api/word/${lang}/random/1/1/1`
-          );
+          let wordsArry = await axios.get(`/api/word/${lang}/random/1/1/1`);
           words = wordsArry.data.randomWords;
         } catch (err) {
           console.log(err);

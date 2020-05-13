@@ -12,7 +12,7 @@ const Login = (props) => {
   let onSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:3005/api/auth/login", login)
+      .post("/api/auth/login", login)
       .then((res) => {
         if (res.data.token) {
           localStorage.setItem("token", res.data.token);

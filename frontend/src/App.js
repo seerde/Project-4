@@ -30,7 +30,7 @@ class App extends Component {
 
   userLogin = async (token) => {
     try {
-      let data = await axios.get("http://localhost:3005/api/auth/user", {
+      let data = await axios.get("/api/auth/user", {
         headers: { "x-auth-token": token },
       });
 
@@ -79,7 +79,7 @@ class App extends Component {
           >
           <Route
             exact
-            path="/game/:host/:sessionid/:player"
+            path="/game/:host/:sessionid/:player/:lang"
             render={(props) => <Game {...props} userLogin={this.userLogin} />}
           />
         </Switch>

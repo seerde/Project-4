@@ -6,24 +6,25 @@ import { getSessionRef } from "../firebase/firebase";
 export default class GameRedirect extends Component {
   constructor(props) {
     super(props);
+    this.check = false;
+    this.lang = "en";
     this.state = {
       redirect: false,
-      host: "",
-      sessionID: "",
-      player: "",
+      host: this.props.match.params.host,
+      sessionID: this.props.match.params.sessionid,
       players: [],
-      check: false,
+      sessionDB: "",
     };
   }
 
   setup = () => {
-    this.setState({
-      host: this.props.match.params.host,
-      sessionID: this.props.match.params.sessionid,
-      player: this.props.user.username,
-    });
-    let { host, sessionID, player } = this.state;
+    this.check = true;
+    let { host, sessionID } = this.state;
+    let player = this.props.user;
     let sessionDB = getSessionRef(host, sessionID);
+    if (host == player.username) {
+      sessionDB.remove();
+    }
 
     //
     // SESSION
@@ -34,29 +35,42 @@ export default class GameRedirect extends Component {
       let playerObj = player;
 
       if (data) {
-        let playerArr = [];
-        Object.keys(data).forEach((key, index) => {
-          let player = data[key];
-          playerArr.push(player);
-          tmp[`${player.username}`] = player;
+        tmp.players = {};
+        Object.keys(data.players).forEach((key, index) => {
+          let player = data.players[key];
+          tmp.players[`${player.username}`] = player;
         });
-        tmp[`${playerObj.username}`] = playerObj;
-        playerArr.push(playerObj);
-        this.setState({
-          players: playerArr,
-        });
+        tmp.players[`${playerObj.username}`] = playerObj;
+        if (host != player.username) {
+        }
         sessionDB.update(tmp);
       } else {
-        tmp[`${playerObj.username}`] = playerObj;
+        tmp.players = {};
+        tmp.players[`${playerObj.username}`] = playerObj;
         tmp["start"] = false;
         sessionDB.set(tmp);
       }
+      this.setState({
+        sessionDB: getSessionRef(host, sessionID),
+      });
     });
     sessionDB.on("value", (data) => {
       data = data.val();
       if (data) {
         if (data.start) {
-          //   this.setRedirect();
+          this.lang = data.lang;
+          let rand = Math.floor(Math.random() * 1000);
+          setTimeout(this.setRedirect, rand);
+          // this.setRedirect();
+        }
+        if (data.players) {
+          let tmpArry = [];
+          Object.keys(data.players).forEach((key) => {
+            tmpArry.push(data.players[key]);
+          });
+          this.setState({
+            players: tmpArry,
+          });
         }
       }
     });
@@ -69,21 +83,45 @@ export default class GameRedirect extends Component {
   };
 
   componentDidMount() {
-    if (this.props.user) {
-    }
     // this.setRedirect();
   }
+
+  componentDidUpdate() {
+    if (!this.check) {
+      this.setup();
+    }
+  }
+
+  langSelect(e) {
+    this.lang = e.target.value;
+  }
+
+  startGame() {
+    if (this.state.host == this.props.user.username) {
+      this.state.sessionDB.once("value", (data) => {
+        data = data.val();
+        if (data) {
+          data.start = true;
+          data.lang = this.lang;
+          this.state.sessionDB.update(data);
+        }
+      });
+    }
+  }
+
   renderRedirect = () => {
     return (
       <Redirect
-        to={`/game/${this.props.match.params.host}/${this.props.match.params.sessionid}/${this.props.user.username}`}
+        to={`/game/${this.props.match.params.host}/${this.props.match.params.sessionid}/${this.props.user.username}/${this.lang}`}
       />
     );
   };
   render() {
+    let playersCards = this.state.players.map((player, key) => {
+      return <div key={key}>{player.username}</div>;
+    });
     return (
       <>
-        {this.props.user ? this.setup() : null}
         {this.state.redirect && this.props.user ? this.renderRedirect() : null}
         <Container>
           <Row xs="2">
@@ -93,18 +131,22 @@ export default class GameRedirect extends Component {
                   <h1> Create private Rome </h1>
                 </Row>
                 <Row>
-                  <input className="name form-control"></input>
-                </Row>
-                <Row>
-                  <input className="des form-control"></input>
-                </Row>
-                <Row>
-                  <select className="lang form-control form-control-md">
-                    <option>Large select</option>
+                  <select
+                    className="lang form-control form-control-md"
+                    onChange={(e) => {
+                      this.langSelect(e);
+                    }}
+                  >
+                    <option value="en">English</option>
+                    <option value="ar">Arabic</option>
                   </select>
                 </Row>
                 <>
-                  <Button className="btn-primary-start" block>
+                  <Button
+                    className="btn-primary-start"
+                    block
+                    onClick={() => this.startGame()}
+                  >
                     Start Game
                   </Button>
                 </>
@@ -114,6 +156,7 @@ export default class GameRedirect extends Component {
               <Container className="player">
                 <Row>
                   <h1> PLAYERS</h1>
+                  {playersCards}
                 </Row>
                 <Row>
                   <hr></hr>
