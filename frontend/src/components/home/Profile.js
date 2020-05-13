@@ -23,10 +23,10 @@ const Profile = () => {
                     </Row>
                     <Row className="text-light text-center mt-3">
                         <Col xs={6}>
-                        <span class="border border-primary p-2"> 0 </span>
+                        <span className="border p-2"> 0 </span>
                         </Col>
                         <Col xs={6}>
-                        <span class="border border-primary p-2"> 0 </span>
+                        <span className="border p-2"> 0 </span>
                         </Col>
                     </Row>
                 </Container>
