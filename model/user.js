@@ -8,6 +8,11 @@ let userSchema = new mongoose.Schema({
         unique: true
     },
 
+    image: {
+        type: String,
+        default: "image.png"
+    },
+
     email: {
         type: String,
         required: true,

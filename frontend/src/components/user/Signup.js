@@ -14,10 +14,7 @@ const Signup = (props) => {
     // console.log(register["password_confirmation"])
     if (register["password"] == register["password_confirmation"]) {
       try {
-        let data = await axios.post(
-          "http://localhost:3005/api/auth/signup",
-          register
-        );
+        let data = await axios.post("/api/auth/signup", register);
         if (data.data.token) {
           localStorage.setItem("token", data.data.token);
           props.userLogin(data.data.token);
@@ -33,7 +30,7 @@ const Signup = (props) => {
   };
 
   return (
-    <div className="inner-container">
+    <div className="inner-profile-container">
       <div className="box">
         <div className="input-group">
           <input

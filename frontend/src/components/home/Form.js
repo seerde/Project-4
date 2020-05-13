@@ -1,26 +1,26 @@
-import React, { Component } from 'react'
-import Profile from "./Profile"
+import React, { Component } from "react";
+import Profile from "./Profile";
 import EditInfo from "./EditInfo";
 
- class Form extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          isProfileOpen: true,
-        };
-      }
-      showProfile() {
-        this.setState({ isProfileOpen: true });
-      }
-      showEdit() {
-        this.setState({ isProfileOpen: false });
-      }
-    render() {
-        return (
-            <div>
+class Form extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isProfileOpen: true,
+    };
+  }
+  showProfile() {
+    this.setState({ isProfileOpen: true });
+  }
+  showEdit() {
+    this.setState({ isProfileOpen: false });
+  }
+  render() {
+    return (
+      <div>
         <div className="profile__container">
           <div className="user__btn" onClick={() => this.showProfile()}>
-          Profile
+            Profile
           </div>
           <div className="user__btn" onClick={() => this.showEdit()}>
             Edit
@@ -32,7 +32,7 @@ import EditInfo from "./EditInfo";
           <EditInfo {...this.props} userLogin={this.props.userLogin} />
         )}
       </div>
-        )
-    }
+    );
+  }
 }
 export default Form;
