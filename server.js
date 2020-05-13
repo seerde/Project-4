@@ -51,7 +51,7 @@ app.use("/api/game", require("./routes/game.routes"));
 app.use("/api/word", require("./routes/word.routes"));
 
 app.get("/game", (req, res) => {
-  res.sendFile(path.join(__dirname + "/public/game.html"));
+  res.sendFile(path.join(__dirname + "/public/game2.html"));
 });
 
 // 404 Routes

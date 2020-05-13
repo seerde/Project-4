@@ -28,10 +28,10 @@ class Word {
 
   renderWord() {
     if (isDrawing) {
-      this.wordText.innerHTML = this.word;
+      this.wordText.innerHTML = `<span>${this.word}</span>`;
     } else {
       if (timer >= 60) {
-        this.wordText.innerHTML = this.formatedWord.join(" ");
+        this.wordText.innerHTML = `<span>${this.formatedWord.join(" ")}</span>`;
       }
 
       // if (timer == 60 && !isFormating) {
@@ -43,20 +43,20 @@ class Word {
       if (timer == 40 && !isFormating) {
         isFormating = true;
         this.pickRand();
-        this.wordText.innerHTML = this.formatedWord.join(" ");
+        this.wordText.innerHTML = `<span>${this.formatedWord.join(" ")}</span>`;
       }
 
       if (timer == 20 && !isFormating) {
         isFormating = true;
         this.pickRand();
-        this.wordText.innerHTML = this.formatedWord.join(" ");
+        this.wordText.innerHTML = `<span>${this.formatedWord.join(" ")}</span>`;
       }
 
       if (timer == 5 && !isFormating) {
         isFormating = true;
         this.amount -= 1;
         this.pickRand();
-        this.wordText.innerHTML = this.formatedWord.join(" ");
+        this.wordText.innerHTML = `<span>${this.formatedWord.join(" ")}</span>`;
       }
     }
   }
@@ -144,7 +144,11 @@ function setup() {
   });
   playersDB.on("value", (data) => {
     data = data.val();
-    isDrawing = data[`${player}`].isDrawing ? true : false;
+    if (data) {
+      if (data.hasOwnProperty(`${player}`)) {
+        isDrawing = data[`${player}`].isDrawing ? true : false;
+      }
+    }
   });
 
   //
@@ -161,7 +165,7 @@ function setup() {
 
       wordDB.limitToLast(1).once("value", (data) => {
         data = data.val();
-        if (data.word == msg && !isDrawing && !answered) {
+        if (data.word == msg.toUpperCase() && !isDrawing && !answered) {
           answered = true;
           chatDB.push({
             playerName: player,
@@ -206,7 +210,10 @@ function setup() {
   //
   // DRAWING
   /////////////////////////////////
-  let canvas = createCanvas(400, 400);
+  let canvasDiv = document.getElementById("canvasContainer");
+  let width = canvasDiv.offsetWidth;
+  let height = canvasDiv.offsetHeight;
+  let canvas = createCanvas(width, height);
   canvas.mousePressed(drawKeyDown);
   canvas.mouseMoved(drawKeyDownAndMoved);
   canvas.parent("canvasContainer");
@@ -258,7 +265,7 @@ function setup() {
       console.log("stopped drawing");
       points = [];
       timer = 60;
-      document.querySelector(".timer").innerHTML = timer;
+      document.querySelector(".timer").innerHTML = `<span>${timer}</span>`;
       gameTimerController(false);
       clear();
       noLoop();
@@ -266,14 +273,34 @@ function setup() {
   });
   $("#draw").on("click", startRound); // draw button
   $("#clear").on("click", nextRound); // clear button
+
   $("#black").on("click", () => pickColor(0, 0, 0));
+  $("#aliceblue").on("click", () => pickColor(240, 248, 255));
+  $("#gray").on("click", () => pickColor(128, 128, 128));
+  $("#lightgray").on("click", () => pickColor(211, 211, 211));
+  $("#darkred").on("click", () => pickColor(139, 0, 0));
+  $("#brown").on("click", () => pickColor(139, 69, 19));
   $("#red").on("click", () => pickColor(255, 0, 0));
-  $("#green").on("click", () => pickColor(0, 255, 0));
+  $("#pink").on("click", () => pickColor(255, 192, 203));
+  $("#orange").on("click", () => pickColor(255, 165, 0));
+  $("#darkorange").on("click", () => pickColor(255, 140, 0));
+  $("#yellow").on("click", () => pickColor(255, 255, 0));
+  $("#khaki").on("click", () => pickColor(240, 230, 140));
+  $("#green").on("click", () => pickColor(0, 128, 0));
+  $("#lightgreen").on("click", () => pickColor(144, 238, 144));
+  $("#lightblue").on("click", () => pickColor(30, 144, 255));
+  $("#lightskyblue").on("click", () => pickColor(135, 206, 250));
   $("#blue").on("click", () => pickColor(0, 0, 255));
+  $("#slateblue").on("click", () => pickColor(106, 90, 205));
+  $("#purple").on("click", () => pickColor(128, 0, 128));
+  $("#violet").on("click", () => pickColor(238, 130, 238));
+
   $("#eraser").on("click", () => pickColor(255, 255, 255));
+
   $("#width1").on("click", () => pickPenwidth(5));
   $("#width2").on("click", () => pickPenwidth(15));
-  $("#width3").on("click", () => pickPenwidth(30));
+  $("#width3").on("click", () => pickPenwidth(25));
+  $("#width4").on("click", () => pickPenwidth(40));
 
   // stop draw() from looping
   noLoop();
@@ -440,7 +467,7 @@ function gameTimerController(state) {
       let seconds = Math.floor(count / 1000) % 60;
       timer = timerMax - seconds;
       isFormating = false;
-      document.querySelector(".timer").innerHTML = timer;
+      document.querySelector(".timer").innerHTML = `<span>${timer}</span>`;
       currentWord.renderWord();
       if (timer == 1) {
         clearInterval();
