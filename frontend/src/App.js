@@ -66,16 +66,6 @@ class App extends Component {
         <Navb user={user} logout={this.logoutHandler} />
         <Switch>
           <Route exact path="/" component={Home} />
-          {/* <Route
-     path="/:id"
-     render={(props)=>{
-             switch(props.match.params.id){
-                  case "1": return <Home/>;
-                  case "2" : return <Form/>;
-                  default : return null;
-              }
-     }}
-  /> */}
           <Route path="/room" component={privatepage} />} />
           <Route
             path="/user"
