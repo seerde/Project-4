@@ -67,10 +67,50 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/change", isLoggedIn, async (req, res) => {
+  // console.log(req.user)
+  // res.status(200).json({ user: req.user});
+  try {
+    let { username, image } = req.body;
+
+    let user = await User.findByIdAndUpdate(req.user._id, {
+      $set: { username: username, image: image }
+    });
+
+    user = await User.findById(req.user._id, "-password")
+    res.status(200).json({ user, message: "Updated !!" });
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+router.post("/ChangeEmail", isLoggedIn, async (req, res) => {
+  try {
+    let { email, password } = req.body;
+    let user = await User.findById(req.user._id);
+    if (!user) throw { message: "user id doesn't exists" };
+
+    const checkPass = await user.verifyPassword(password);
+    if (!checkPass) {
+      res.status(401).json({ message: "Password Incorrect!" });
+    } else {
+      user = await User.findByIdAndUpdate(req.user._id, {
+        $set: { email: email },
+      });
+
+      user = await User.findById(req.user._id, "-password");
+      res.status(200).json({ user, message: "Updated !!" });
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 router.post("/ChangePassword", isLoggedIn, async (req, res) => {
   try {
-    let { _id, oldpassword, newpassword } = req.body;
-    let user = await User.findById(_id);
+    let { oldpassword, newpassword } = req.body;
+    let user = await User.findById(req.user._id);
     if (!user) throw { message: "user id doesn't exists" };
 
     const checkPass = await user.verifyPassword(oldpassword);
@@ -81,7 +121,7 @@ router.post("/ChangePassword", isLoggedIn, async (req, res) => {
         if (err)
           res.status(500).json({ message: "Couldn't update the password" });
 
-        let user = await User.findByIdAndUpdate(_id, {
+        let user = await User.findByIdAndUpdate(req.user._id, {
           $set: { password: pass },
         });
         user.password = "";
@@ -104,7 +144,7 @@ router.get("/user", isLoggedIn, async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "something went wrong!" });
   }
-  
+
 });
 
 module.exports = router;
