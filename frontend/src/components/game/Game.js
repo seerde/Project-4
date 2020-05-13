@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Card } from "react-bootstrap";
 import {
   getPlayerRef,
   getDrawingRef,
@@ -14,9 +15,14 @@ import $ from "jquery";
 import queryString from "query-string";
 
 import "./styles.css";
+import Background from "./pen.png";
+import Eraser from "./eraser.png";
 
 export default class Game extends Component {
   myRef = React.createRef();
+  state = {
+    currentPlayers: {},
+  };
 
   Sketch = (p) => {
     let host, sessionID, player; // URL params
@@ -171,6 +177,9 @@ export default class Game extends Component {
       playersDB.on("value", (data) => {
         data = data.val();
         if (data) {
+          this.setState({
+            currentPlayers: data,
+          });
           if (data.hasOwnProperty(`${player}`)) {
             isDrawing = data[`${player}`].isDrawing ? true : false;
           }
@@ -184,24 +193,10 @@ export default class Game extends Component {
       let chatInp = p.select("#inputBox");
       let chatBtn = $("#btnSend");
 
-      chatBtn.on("click", (e) => {
-        let msg = chatInp.value();
-        if (msg != "") {
-          chatInp.value("");
-
-          wordDB.limitToLast(1).once("value", (data) => {
-            data = data.val();
-            if (data.word == msg.toUpperCase() && !isDrawing && !answered) {
-              answered = true;
-              chatDB.push({
-                playerName: player,
-                msg: `Guessed the answer correctly!`,
-                answer: true,
-              });
-            } else {
-              chatDB.push({ playerName: player, msg: msg, answer: false });
-            }
-          });
+      chatBtn.on("click", sendToChat);
+      $("#inputBox").on("keypress", (e) => {
+        if (e.which === 13) {
+          sendToChat();
         }
       });
 
@@ -220,6 +215,8 @@ export default class Game extends Component {
         msgEle.class("message");
         msgEle.parent(li);
         li.parent(chatDiv);
+
+        $(".panel-body").scrollTop(100000000);
 
         if (answer && isDrawing) {
           playersDB.once("value", (data) => {
@@ -330,11 +327,31 @@ export default class Game extends Component {
 
       // stop draw() from looping
       p.noLoop();
+      function sendToChat() {
+        let msg = chatInp.value();
+        if (msg != "") {
+          chatInp.value("");
+
+          wordDB.limitToLast(1).once("value", (data) => {
+            data = data.val();
+            if (data.word == msg.toUpperCase() && !isDrawing && !answered) {
+              answered = true;
+              chatDB.push({
+                playerName: player,
+                msg: `Guessed the answer correctly!`,
+                answer: true,
+              });
+            } else {
+              chatDB.push({ playerName: player, msg: msg, answer: false });
+            }
+          });
+        }
+      }
     };
     p.draw = () => {
       p.stroke(r, g, b);
       p.strokeWeight(penwidth);
-      p.noFill();
+      p.fill(0);
 
       for (let i = 0; i < points.length; i++) {
         let point = points[i];
@@ -379,7 +396,9 @@ export default class Game extends Component {
       if (isDrawing) {
         // get 3 random words
         try {
-          let wordsArry = await axios.get(`/api/word/${lang}/random/1/1/1`);
+          let wordsArry = await axios.get(
+            `http://localhost:3005/api/word/${lang}/random/1/1/1`
+          );
           words = wordsArry.data.randomWords;
         } catch (err) {
           console.log(err);
@@ -540,140 +559,169 @@ export default class Game extends Component {
   }
 
   render() {
+    let playersCard = Object.keys(this.state.currentPlayers).map(
+      (player, i) => {
+        return (
+          <div key={i}>
+            <div>{this.state.currentPlayers[player].name}</div>
+            <div>{this.state.currentPlayers[player].score}</div>
+          </div>
+        );
+      }
+    );
     return (
-      <div className="all__view">
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-9">
-              <div className="game__container">
-                <div className="row inner__game__container">
-                  <div className="col-2 leaderboard__container">
-                    <div></div>
+      <div className="container__cust">
+        <div className="row">
+          <div className="col-9">
+            <div className="game__container">
+              <div className="row inner__game__container">
+                <div className="col-2 leaderboard__container">
+                  <div>{playersCard}</div>
+                </div>
+                <div className="col-9 drawing__container">
+                  <div className="timer">
+                    <span>60</span>
                   </div>
-                  <div className="col-9 drawing__container">
-                    <div className="timer">
-                      <span>60</span>
+                  <div id="canvasContainer" className="canvasContainer"></div>
+                  <div className="word">
+                    <span>WORD</span>
+                  </div>
+                </div>
+                <div className="col-1 tools__container">
+                  <div className="row tools1">
+                    <div className="pen__box__row">
+                      <div
+                        id="eraser"
+                        className="pen__box"
+                        style={{
+                          marginTop: "10px",
+                          backgroundImage: `url(${Eraser})`,
+                          backgroundRepeat: "no-repeat",
+                          backgroundSize: "110% 85%",
+                          backgroundPosition: "center",
+                        }}
+                      ></div>
                     </div>
-                    <div id="canvasContainer" className="canvasContainer"></div>
-                    <div className="word">
-                      <span>WORD</span>
+                    <div className="pen__box__row">
+                      <div
+                        id="width1"
+                        className="pen__box"
+                        style={{
+                          backgroundColor: "gray",
+                          backgroundImage: `url(${Background})`,
+                          backgroundRepeat: "no-repeat",
+                          backgroundSize: "35% 30%",
+                          backgroundPosition: "center",
+                        }}
+                      ></div>
+                      <div
+                        id="width2"
+                        className="pen__box"
+                        style={{
+                          backgroundColor: "gray",
+                          backgroundImage: `url(${Background})`,
+                          backgroundRepeat: "no-repeat",
+                          backgroundSize: "60% 50%",
+                          backgroundPosition: "center",
+                        }}
+                      ></div>
+                      <div
+                        id="width3"
+                        className="pen__box"
+                        style={{
+                          backgroundColor: "gray",
+                          backgroundImage: `url(${Background})`,
+                          backgroundRepeat: "no-repeat",
+                          backgroundSize: "85% 65%",
+                          backgroundPosition: "center",
+                        }}
+                      ></div>
+                      <div
+                        id="width4"
+                        className="pen__box"
+                        style={{
+                          backgroundColor: "gray",
+                          backgroundImage: `url(${Background})`,
+                          backgroundRepeat: "no-repeat",
+                          backgroundSize: "110% 85%",
+                          backgroundPosition: "center",
+                        }}
+                      ></div>
                     </div>
                   </div>
-                  <div className="col-1 tools__container">
-                    <div className="row tools1">
-                      <div className="pen__box__row">
-                        <div
-                          id="eraser"
-                          className="pen__box"
-                          style={{ marginTop: "10px" }}
-                        ></div>
-                      </div>
-                      <div className="pen__box__row">
-                        <div
-                          id="width1"
-                          className="pen__box"
-                          style={{ backgroundColor: "gray" }}
-                        >
-                          5
-                        </div>
-                        <div
-                          id="width2"
-                          className="pen__box"
-                          style={{ backgroundColor: "gray" }}
-                        >
-                          15
-                        </div>
-                        <div
-                          id="width3"
-                          className="pen__box"
-                          style={{ backgroundColor: "gray" }}
-                        >
-                          25
-                        </div>
-                        <div
-                          id="width4"
-                          className="pen__box"
-                          style={{ backgroundColor: "gray" }}
-                        >
-                          40
-                        </div>
-                      </div>
+                  <div className="row tools2">
+                    <div className="color__box__row">
+                      <div id="aliceblue" className="color__box"></div>
+                      <div id="black" className="color__box"></div>
                     </div>
-                    <div className="row tools2">
-                      <div className="color__box__row">
-                        <div id="aliceblue" className="color__box"></div>
-                        <div id="black" className="color__box"></div>
-                      </div>
-                      <div className="color__box__row">
-                        <div id="lightgray" className="color__box"></div>
-                        <div id="gray" className="color__box"></div>
-                      </div>
-                      <div className="color__box__row">
-                        <div id="brown" className="color__box"></div>
-                        <div id="darkred" className="color__box"></div>
-                      </div>
-                      <div className="color__box__row">
-                        <div id="pink" className="color__box"></div>
-                        <div id="red" className="color__box"></div>
-                      </div>
-                      <div className="color__box__row">
-                        <div id="darkorange" className="color__box"></div>
-                        <div id="orange" className="color__box"></div>
-                      </div>
-                      <div className="color__box__row">
-                        <div id="khaki" className="color__box"></div>
-                        <div id="yellow" className="color__box"></div>
-                      </div>
-                      <div className="color__box__row">
-                        <div id="lightgreen" className="color__box"></div>
-                        <div id="green" className="color__box"></div>
-                      </div>
-                      <div className="color__box__row">
-                        <div id="lightskyblue" className="color__box"></div>
-                        <div id="lightblue" className="color__box"></div>
-                      </div>
-                      <div className="color__box__row">
-                        <div id="slateblue" className="color__box"></div>
-                        <div id="blue" className="color__box"></div>
-                      </div>
-                      <div className="color__box__row">
-                        <div id="violet" className="color__box"></div>
-                        <div id="purple" className="color__box"></div>
-                      </div>
+                    <div className="color__box__row">
+                      <div id="lightgray" className="color__box"></div>
+                      <div id="gray" className="color__box"></div>
+                    </div>
+                    <div className="color__box__row">
+                      <div id="brown" className="color__box"></div>
+                      <div id="darkred" className="color__box"></div>
+                    </div>
+                    <div className="color__box__row">
+                      <div id="pink" className="color__box"></div>
+                      <div id="red" className="color__box"></div>
+                    </div>
+                    <div className="color__box__row">
+                      <div id="darkorange" className="color__box"></div>
+                      <div id="orange" className="color__box"></div>
+                    </div>
+                    <div className="color__box__row">
+                      <div id="khaki" className="color__box"></div>
+                      <div id="yellow" className="color__box"></div>
+                    </div>
+                    <div className="color__box__row">
+                      <div id="lightgreen" className="color__box"></div>
+                      <div id="green" className="color__box"></div>
+                    </div>
+                    <div className="color__box__row">
+                      <div id="lightskyblue" className="color__box"></div>
+                      <div id="lightblue" className="color__box"></div>
+                    </div>
+                    <div className="color__box__row">
+                      <div id="slateblue" className="color__box"></div>
+                      <div id="blue" className="color__box"></div>
+                    </div>
+                    <div className="color__box__row">
+                      <div id="violet" className="color__box"></div>
+                      <div id="purple" className="color__box"></div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-3">
-              <div className="chat__container">
-                <div id="chat">
-                  <div className="col">
-                    <div className="panel panel-primary">
-                      <div className="panel-heading">
-                        <span className="glyphicon glyphicon-comment"></span>{" "}
-                        Chat
-                      </div>
-                      <div className="panel-body">
-                        <ul className="chat"></ul>
-                      </div>
-                      <div className="panel-footer">
-                        <div className="input-group">
-                          <input
-                            id="inputBox"
-                            type="text"
-                            className="form-control input-sm"
-                            placeholder="Enter your guess"
-                          />
-                          <span className="input-group-btn">
-                            <button
-                              className="btn btn-warning btn-sm"
-                              id="btnSend"
-                            >
-                              Send
-                            </button>
-                          </span>
-                        </div>
+          </div>
+          <div className="col-3">
+            <div className="chat__container">
+              <div id="chat">
+                <div className="col">
+                  <div className="panel panel-primary">
+                    <div className="panel-heading">
+                      <span className="glyphicon glyphicon-comment"></span> Chat
+                    </div>
+                    <div className="panel-body">
+                      <ul className="chat"></ul>
+                    </div>
+                    <div className="panel-footer">
+                      <div className="input-group">
+                        <input
+                          id="inputBox"
+                          type="text"
+                          className="form-control input-sm"
+                          placeholder="Enter your guess"
+                        />
+                        <span className="input-group-btn">
+                          <button
+                            className="btn btn-warning btn-sm"
+                            id="btnSend"
+                          >
+                            Send
+                          </button>
+                        </span>
                       </div>
                     </div>
                   </div>

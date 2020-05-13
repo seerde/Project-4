@@ -83,14 +83,13 @@ export default class GameRedirect extends Component {
   };
 
   componentDidMount() {
-    // this.setRedirect();
-  }
-
-  componentDidUpdate() {
     if (!this.check) {
+      console.log("test");
       this.setup();
     }
   }
+
+  componentDidUpdate() {}
 
   langSelect(e) {
     this.lang = e.target.value;
@@ -156,10 +155,15 @@ export default class GameRedirect extends Component {
               <Container className="player">
                 <Row>
                   <h1> PLAYERS</h1>
-                  {playersCards}
                 </Row>
                 <Row>
                   <hr></hr>
+                  {playersCards}
+                </Row>
+              </Container>
+              <Container>
+                <Row>
+                  <h1>{window.location.href}</h1>
                 </Row>
               </Container>
             </Col>

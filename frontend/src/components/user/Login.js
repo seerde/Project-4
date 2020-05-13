@@ -12,7 +12,7 @@ const Login = (props) => {
   let onSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("/api/auth/login", login)
+      .post("http://localhost:3005/api/auth/login", login)
       .then((res) => {
         if (res.data.token) {
           localStorage.setItem("token", res.data.token);
@@ -30,7 +30,7 @@ const Login = (props) => {
   };
 
   return (
-    <div className="inner-container">
+    <div className="inner-profile-container">
       <div className="box">
         <div className="input-group">
           <label htmlFor="emil"></label>
