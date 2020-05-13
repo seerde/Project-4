@@ -101,6 +101,17 @@ class App extends Component {
               component={Game}
             />
           )}
+          {this.state.waiting && (
+            <PrivateRoute
+              exact
+              path="/profile"
+              isLogin={isAuth}
+              user={user}
+              logout={this.logoutHandler}
+              redirectTo="/"
+              component={User}
+            />
+          )}
           {/* <Route exact path="/" component={Home} /> */}
           {/* <Route path="/room" component={privatepage} />} /> */}
           {/* <Route

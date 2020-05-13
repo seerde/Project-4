@@ -1,36 +1,38 @@
 import React, { Component } from "react";
-import Login from "../user/Login";
-import Signup from "../user/Signup";
+import Editemail from "./Editemail";
+import Editpass from "./Editpass";
 
 export default class User extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoginOpen: true,
+      isEmailOpen: true,
     };
   }
-  showLogin() {
-    this.setState({ isLoginOpen: true });
+  showEmail() {
+    this.setState({ isEmailOpen: true });
   }
-  showSingup() {
-    this.setState({ isLoginOpen: false });
+  showPassword() {
+    this.setState({ isEmailOpen: false });
   }
   render() {
     return (
       <div>
         <div className="user__container">
-          <div className="user__btn" onClick={() => this.showLogin()}>
-            Login
+          <div className="user__btn" onClick={() => this.showEmail()}>
+            Change Email
           </div>
-          <div className="user__btn" onClick={() => this.showSingup()}>
-            Create Account
+          <div className="user__btn" onClick={() => this.showPassword()}>
+            Change Password
           </div>
         </div>
-        {this.state.isLoginOpen ? (
-          <Login {...this.props} userLogin={this.props.userLogin} />
-        ) : (
-          <Signup {...this.props} userLogin={this.props.userLogin} />
-        )}
+        <div className="inner-container">
+          {this.state.isEmailOpen ? (
+            <Editemail {...this.props} />
+          ) : (
+            <Editpass {...this.props} />
+          )}
+        </div>
       </div>
     );
   }
