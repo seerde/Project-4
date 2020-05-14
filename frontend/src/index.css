@@ -14,13 +14,14 @@ body {
   max-width: 800px;
   height: 650px;
   margin: 100px auto;
-  padding: 75px;
+  padding: 63px;
   border: 1px solid gray;
   border-radius: 5px;
   background-image: url("/background2.jpeg");
   background-repeat: no-repeat;
   background-size: cover;
 }
+
 .player h1 {
   margin: 5px auto;
 }
@@ -46,8 +47,8 @@ option {
 .home h1 {
   padding-left: 30px;
   padding-bottom: 10px;
+
   color: #000;
-  margin-top: 55px;
 }
 .homeCus {
   padding-left: 30px;
@@ -179,7 +180,9 @@ option {
   border-radius: 5px;
   background-color: #231f20;
 }
-
+.border {
+  border-color: #61c0d8 !important;
+}
 .user__btn {
   display: flex;
   align-items: center;
