@@ -7,12 +7,15 @@ body {
   -moz-osx-font-smoothing: grayscale; */
   background-image: url("/background1.jpeg");
 }
+.Logo{
+  font-family: "Lalezar";
+}
 .row {
   margin-right: 0 !important;
 }
 .home {
   max-width: 800px;
-  height: 650px;
+  height: 653px;
   margin: 100px auto;
   padding: 63px;
   border: 1px solid gray;
@@ -21,9 +24,9 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
 }
-
-.player h1 {
+.player h2 {
   margin: 5px auto;
+  padding-top: 35px;
 }
 .home .name {
   margin: 10px auto;
@@ -45,16 +48,16 @@ option {
   border-radius: 20px;
 }
 .home h1 {
-  padding-left: 30px;
-  padding-bottom: 10px;
-
-  color: #000;
+  padding-bottom: 20px;
+  color: #fff;
+  font-size: 30px;
+  margin: 0 auto;
 }
 .homeCus {
   padding-left: 30px;
   padding-bottom: 10px;
   color: #000;
-  margin-top: 55px;
+  padding-top: 10px;
 }
 .home-box {
   background-color: #fff !important;
@@ -95,6 +98,7 @@ option {
   background-size: cover;
   min-height: 460px;
   background-color: rgb(245, 243, 243);
+  height: 653px;
 }
 /* 
 .home h2,p {
@@ -150,7 +154,7 @@ option {
   border-radius: 5px;
   background-image: url("/background2.jpeg");
   background-repeat: no-repeat;
-  background-size: cover;
+  background-position: center;
 }
 
 .inner-container-user {
@@ -223,9 +227,10 @@ option {
   border: 0.5px;
 
   margin: 0 0 15px;
-  padding: 15px;
+  padding: 10px;
   box-sizing: border-box;
   font-size: 14px;
+  border-radius: 5px;
 }
 
 .box button {
@@ -252,110 +257,6 @@ input:focus {
   outline: none;
 }
 
-.film-list {
-  position: relative;
-  flex: 1 0 33.333333%;
-  height: 100%;
-  padding: 3.6em 0 0;
-  overflow-y: scroll;
-  background-color: #f0f0f0;
-}
-.film-list > .section-title {
-  width: 33.333333%;
-  left: 0;
-}
-.film-details {
-  flex: 0 1 66.666666%;
-  background-color: #f0f0f0;
-}
-.film-row {
-  display: grid;
-  position: relative;
-  grid-template-columns: 1fr 3fr;
-  margin-bottom: 0.2rem;
-  font-size: 0.5em;
-  background-color: white;
-}
-.film-row:hover {
-  cursor: pointer;
-}
-.film-row-fave {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  font-size: 2rem;
-  font-weight: 800;
-  padding: 0 0.2em;
-  background-color: transparent;
-  transition: all 0.1s linear;
-}
-.film-row-fave.remove_from_queue {
-  background-color: rgba(32, 178, 170, 0.75);
-}
-.film-poster {
-  margin: 0;
-}
-.film-summary {
-  padding: 0.5em 1.5em;
-  background-color: white;
-}
-.film-summary > h1 {
-  margin-bottom: 0.35em;
-}
-.film-summary > p {
-  font-size: 1.6em;
-  line-height: 1.35;
-  font-weight: 200;
-  margin-top: 0;
-}
-.section-title {
-  position: fixed;
-  top: 0;
-  z-index: 10;
-  background-color: #777;
-  color: white;
-  text-align: center;
-  font-size: 0.75em;
-  padding: 0.5em;
-  margin: 0 0 0.1em;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-}
-.film-list-filters {
-  position: fixed;
-  top: 1.6em;
-  left: 0;
-  z-index: 10;
-  display: flex;
-  justify-content: center;
-  width: 33.333333%;
-}
-.film-list-filter {
-  flex-basis: 50%;
-  flex-grow: 1;
-  background-color: #ccc;
-  color: white;
-  text-align: center;
-  font-size: 0.75em;
-  padding: 0.5em;
-  margin: 0 0 0.1em;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-.film-list-filter:hover {
-  background-color: hsl(177, 70%, 46%);
-}
-.film-list-filter.is-active {
-  background-color: lightseagreen;
-}
-.section-count {
-  display: inline-block;
-  background-color: white;
-  color: black;
-  text-align: center;
-  padding: 0.25em 0.25em 0.25em 0.5em;
-  border-radius: 20%;
-  margin-left: 0.5em;
-  font-weight: bold;
+.link-box{
+  background-color: #fff;
 }
