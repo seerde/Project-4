@@ -105,9 +105,9 @@ export const Home = (props) => {
           <Col xs={4}>
             <Container>
               {props.isAuth ? (
-                <Form userLogin={props.userLogin} />
+                <Form {...props} userLogin={props.userLogin} />
               ) : (
-                <UserForm userLogin={props.userLogin} />
+                <UserForm {...props} userLogin={props.userLogin} />
               )}
             </Container>
           </Col>

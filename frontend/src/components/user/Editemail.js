@@ -7,18 +7,22 @@ export default class Editemail extends Component {
   };
 
   onChangeInput = ({ target: { name, value } }) => {
-    this.setState({ ...this.state.info, [name]: value });
+    this.setState({ info: { ...this.state.info, [name]: value } });
   };
 
   onSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:3005/api/auth/ChangeEmail", {
-        email: this.state.info.email,
-        password: this.state.info.password,
-      })
+      .post(
+        "http://localhost:3005/api/auth/ChangeEmail",
+        {
+          email: this.state.info.email,
+          password: this.state.info.password,
+        },
+        { headers: { "x-auth-token": localStorage.getItem("token") } }
+      )
       .then(() => {
-        this.props.logout();
+        this.props.logout(e);
         this.props.history.push("/");
       })
       .catch((err) => {
@@ -33,7 +37,7 @@ export default class Editemail extends Component {
           <div className="input-group">
             <label htmlFor="password"></label>
             <input
-              type="password"
+              type="email"
               name="email"
               placeholder="New Email"
               onChange={this.onChangeInput}
@@ -48,7 +52,11 @@ export default class Editemail extends Component {
               onChange={this.onChangeInput}
             />
           </div>
-          <button type="button" className="btn btn-sm" onClick={this.onSubmit}>
+          <button
+            type="button"
+            className="btn btn-sm"
+            onClick={(e) => this.onSubmit(e)}
+          >
             Edit
           </button>
         </div>

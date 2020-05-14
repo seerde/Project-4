@@ -7,19 +7,24 @@ export default class Editpass extends Component {
   };
 
   onChangeInput = ({ target: { name, value } }) => {
-    this.setState({ ...this.state.info, [name]: value });
+    this.setState({ info: { ...this.state.info, [name]: value } });
   };
 
   onSubmit = (e) => {
     if (this.state.info.password === this.state.info.rePassword) {
+      console.log(this.state.info);
       e.preventDefault();
       axios
-        .post("http://localhost:3005/api/auth/ChangePassword", {
-          oldpassword: this.state.info.oldPassword,
-          newpassword: this.state.info.password,
-        })
+        .post(
+          "http://localhost:3005/api/auth/ChangePassword",
+          {
+            oldpassword: this.state.info.oldPassword,
+            newpassword: this.state.info.password,
+          },
+          { headers: { "x-auth-token": localStorage.getItem("token") } }
+        )
         .then(() => {
-          this.props.logout();
+          this.props.logout(e);
           this.props.history.push("/");
         })
         .catch((err) => {
@@ -59,7 +64,11 @@ export default class Editpass extends Component {
               onChange={this.onChangeInput}
             />
           </div>
-          <button type="button" className="btn btn-sm" onClick={this.onSubmit}>
+          <button
+            type="button"
+            className="btn btn-sm"
+            onClick={(e) => this.onSubmit(e)}
+          >
             Edit
           </button>
         </div>

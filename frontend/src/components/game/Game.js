@@ -130,9 +130,9 @@ export default class Game extends Component {
       playersDB = getPlayerRef(host, sessionID);
       drawingDB = getDrawingRef(host, sessionID);
       timerDB = getTimerRef(host, sessionID);
-      gameDB = getChatRef(host, sessionID);
+      chatDB = getChatRef(host, sessionID);
       wordDB = getWordRef(host, sessionID);
-      chatDB = getGameRef(host, sessionID);
+      gameDB = getGameRef(host, sessionID);
 
       //
       // PLAYERS
@@ -174,7 +174,7 @@ export default class Game extends Component {
           gameDB.set({ start: false, clear: false, loop: false, count: 1 }); // push players count
         }
       });
-      playersDB.on("value", (data) => {
+      playersDB.on("value", async (data) => {
         data = data.val();
         if (data) {
           this.setState({
@@ -182,6 +182,25 @@ export default class Game extends Component {
           });
           if (data.hasOwnProperty(`${player}`)) {
             isDrawing = data[`${player}`].isDrawing ? true : false;
+            if (data[`${player}`].hasOwnProperty(`newScore`)) {
+              if (data[`${player}`].newScore > 0) {
+                try {
+                  await axios.post(
+                    "http://localhost:3005/api/game/addScore",
+                    { score: data[`${player}`].newScore },
+                    {
+                      headers: {
+                        "x-auth-token": localStorage.getItem("token"),
+                      },
+                    }
+                  );
+                  data[`${player}`].newScore = 0;
+                  await playersDB.update(data);
+                } catch (error) {
+                  console.log(error);
+                }
+              }
+            }
           }
         }
       });
@@ -222,8 +241,10 @@ export default class Game extends Component {
           playersDB.once("value", (data) => {
             data = data.val();
 
-            data[`${playerName}`].score += 10;
-            data[`${player}`].score += 5;
+            data[`${playerName}`].score += 5;
+            data[`${playerName}`][`newScore`] = 5;
+            data[`${player}`].score += 10;
+            data[`${player}`][`newScore`] = 5;
 
             playersDB.update(data);
           });
@@ -260,7 +281,6 @@ export default class Game extends Component {
         word = data.word;
         currentWord = new Word(word);
         currentWord.renderWord();
-        console.log(word);
       });
 
       //
@@ -327,6 +347,7 @@ export default class Game extends Component {
 
       // stop draw() from looping
       p.noLoop();
+      setTimeout(startRound, 4000);
       function sendToChat() {
         let msg = chatInp.value();
         if (msg != "") {
@@ -417,9 +438,10 @@ export default class Game extends Component {
         display: "flex",
         justifyContent: "space-around",
         position: "absolute",
-        width: "80%",
-        top: "50%",
-        left: "20px",
+        width: "100%",
+        height: "100%",
+        top: "0",
+        left: "0",
         color: "red",
       });
 
@@ -430,6 +452,7 @@ export default class Game extends Component {
       $(".word__btn").css({
         fontSize: "24px",
         color: "white",
+        alignSelf: "center",
         backgroundColor: "rgba(25, 26, 35, 0.7)",
       });
 
