@@ -26,8 +26,8 @@ const Navb = (props) => {
   return (
     <div>
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-        <Navbar.Brand as={Link} to="/">
-        kharbsha
+        <Navbar.Brand as={Link} to="/" className="Logo" >
+        خربشة
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse

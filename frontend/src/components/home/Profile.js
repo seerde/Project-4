@@ -11,23 +11,13 @@ const Profile = () => {
                         <Image className="rounded mx-auto d-block" src="https://via.placeholder.com/150" rounded />
                     </Row>
                     <Row>
-                        <label className="text-light mx-auto">User Name</label>
+                        <label className="text-light mx-auto mt-3">User Name</label>
                     </Row>
-                    <Row className="text-light text-center text-uppercase mt-5">
-                        <Col xs={6}>
-                        <label>Overall</label>
-                        </Col>
-                        <Col xs={6}>
-                        <label>Feedback</label>
-                        </Col>
+                    <Row>
+                        <label className="text-light text-center mx-auto text-uppercase mt-5">Your Score</label>
                     </Row>
-                    <Row className="text-light text-center mt-3">
-                        <Col xs={6}>
-                        <span className="border p-2"> 0 </span>
-                        </Col>
-                        <Col xs={6}>
-                        <span className="border p-2"> 0 </span>
-                        </Col>
+                    <Row >
+                        <span className="text-light mx-auto text-center mt-3 border pr-5 pl-5 pt-3 pb-3"> 0 </span>
                     </Row>
                 </Container>
             </div>
