@@ -20,7 +20,7 @@ var whitelist = [
   "http://localhost:3000",
   "http://localhost:3005",
   "http://localhost:3006",
-  "https://<website-name>.herokuapp.com",
+  "https://kharbsha.herokuapp.com",
 ];
 var corsOptions = {
   origin: function (origin, callback) {
@@ -50,9 +50,9 @@ app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/game", require("./routes/game.routes"));
 app.use("/api/word", require("./routes/word.routes"));
 
-app.get("/game", (req, res) => {
-  res.sendFile(path.join(__dirname + "/public/game2.html"));
-});
+// app.get("/game", (req, res) => {
+//   res.sendFile(path.join(__dirname + "/public/game2.html"));
+// });
 
 // 404 Routes
 //===================

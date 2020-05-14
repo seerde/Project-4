@@ -30,7 +30,7 @@ const Login = (props) => {
   };
 
   return (
-    <div className="inner-container">
+    <div className="inner-profile-container">
       <div className="box">
         <div className="input-group">
           <label htmlFor="emil"></label>
