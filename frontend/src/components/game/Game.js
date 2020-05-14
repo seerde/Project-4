@@ -186,7 +186,7 @@ export default class Game extends Component {
               if (data[`${player}`].newScore > 0) {
                 try {
                   await axios.post(
-                    "http://localhost:3005/api/game/addScore",
+                    "/api/game/addScore",
                     { score: data[`${player}`].newScore },
                     {
                       headers: {
@@ -347,7 +347,7 @@ export default class Game extends Component {
 
       // stop draw() from looping
       p.noLoop();
-      setTimeout(startRound, 4000);
+      setTimeout(startRound, 5000);
       function sendToChat() {
         let msg = chatInp.value();
         if (msg != "") {
@@ -417,9 +417,7 @@ export default class Game extends Component {
       if (isDrawing) {
         // get 3 random words
         try {
-          let wordsArry = await axios.get(
-            `http://localhost:3005/api/word/${lang}/random/1/1/1`
-          );
+          let wordsArry = await axios.get(`/api/word/${lang}/random/1/1/1`);
           words = wordsArry.data.randomWords;
         } catch (err) {
           console.log(err);

@@ -24,7 +24,7 @@ export default class EditInfo extends Component {
     e.preventDefault();
     axios
       .post(
-        "http://localhost:3005/api/auth/change",
+        "/api/auth/change",
         {
           username: this.state.info.username,
           image: this.state.ava[this.state.currentAva],

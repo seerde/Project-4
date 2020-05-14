@@ -16,7 +16,7 @@ export default class Editpass extends Component {
       e.preventDefault();
       axios
         .post(
-          "http://localhost:3005/api/auth/ChangePassword",
+          "/api/auth/ChangePassword",
           {
             oldpassword: this.state.info.oldPassword,
             newpassword: this.state.info.password,

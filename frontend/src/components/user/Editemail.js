@@ -14,7 +14,7 @@ export default class Editemail extends Component {
     e.preventDefault();
     axios
       .post(
-        "http://localhost:3005/api/auth/ChangeEmail",
+        "/api/auth/ChangeEmail",
         {
           email: this.state.info.email,
           password: this.state.info.password,

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, Image, Card } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import { getSessionRef } from "../firebase/firebase";
 
@@ -59,7 +59,7 @@ export default class GameRedirect extends Component {
       if (data) {
         if (data.start) {
           this.lang = data.lang;
-          let rand = Math.floor(Math.random() * 1000);
+          let rand = Math.floor(Math.random() * 3000);
           setTimeout(this.setRedirect, rand);
           // this.setRedirect();
         }
@@ -115,9 +115,23 @@ export default class GameRedirect extends Component {
       />
     );
   };
+
   render() {
     let playersCards = this.state.players.map((player, key) => {
-      return <div key={key}>{player.username}</div>;
+      return (
+        <Col key={key} xs={6} className="mt-5">
+          <div
+            style={{ textAlign: "center", fontSize: "18px", fontWeight: "600" }}
+          >
+            {player.username.toUpperCase()}
+          </div>
+          <Image
+            className="w-25 rounded mx-auto d-block"
+            src={`${window.location.origin}/${player.image}`}
+            roundedCircle
+          />
+        </Col>
+      );
     });
     return (
       <>
@@ -127,7 +141,16 @@ export default class GameRedirect extends Component {
             <Col>
               <Container className="home">
                 <Row>
-                  <h1> Create private Rome </h1>
+                  <h1 className="mt-5"> Create private room </h1>
+                </Row>
+                <Row className="text-light text-center ml-5 mt-5">
+                  <p className="text-light text-center ml-5 ">
+                    {" "}
+                    copy this link to share with others:{" "}
+                  </p>
+                  <p className="link-box text-dark text-center ml-5 border p-2">
+                    {window.location.href}
+                  </p>
                 </Row>
                 <Row>
                   <select
@@ -142,7 +165,7 @@ export default class GameRedirect extends Component {
                 </Row>
                 <>
                   <Button
-                    className="btn-primary-start"
+                    className="btn-primary-start mt-5"
                     block
                     onClick={() => this.startGame()}
                   >
@@ -154,16 +177,12 @@ export default class GameRedirect extends Component {
             <Col>
               <Container className="player">
                 <Row>
-                  <h1> PLAYERS</h1>
+                  <h2 className="mt-5"> Players </h2>
                 </Row>
                 <Row>
-                  <hr></hr>
-                  {playersCards}
-                </Row>
-              </Container>
-              <Container>
-                <Row>
-                  <h1>{window.location.href}</h1>
+                  <Container>
+                    <Row>{playersCards}</Row>
+                  </Container>
                 </Row>
               </Container>
             </Col>

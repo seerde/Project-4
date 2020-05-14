@@ -13,21 +13,14 @@ const Navb = (props) => {
       </Nav.Link>
     </>
   ) : (
-    <>
-      <Nav.Link as={Link} to="/login">
-        Login
-      </Nav.Link>
-      <Nav.Link as={Link} to="/signup">
-        Register
-      </Nav.Link>
-    </>
+    <></>
   );
 
   return (
     <div>
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-        <Navbar.Brand as={Link} to="/">
-          Kharbashah
+        <Navbar.Brand as={Link} to="/" className="Logo">
+          Kharbsha
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse

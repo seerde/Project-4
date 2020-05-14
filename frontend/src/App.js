@@ -32,7 +32,7 @@ class App extends Component {
 
   userLogin = async (token) => {
     try {
-      let data = await axios.get("http://localhost:3005/api/auth/user", {
+      let data = await axios.get("/api/auth/user", {
         headers: { "x-auth-token": token },
       });
 
